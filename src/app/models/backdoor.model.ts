@@ -1,19 +1,20 @@
-import {getPool} from "../../config/db";
-import fs from 'mz/fs';
-import * as defaultUsers from "../resources/default_users.json"
-import * as passwords from "../services/passwords";
-const imageDirectory = './storage/images/';
 const defaultPhotoDirectory = './storage/default/';
-
+import * as defaultUsers from "../resources/default_users.json";
+const imageDirectory = './storage/images/';
+import * as passwords from "../services/passwords";
 import Logger from "../../config/logger";
+import {getPool} from "../../config/db";
+
 import {OkPacket, ResultSetHeader, RowDataPacket} from "mysql2";
+import mysql from "mysql2/promise";
+import fs from 'mz/fs';
 
 const resetDb = async (): Promise<any> => {
     const promises = [];
 
     const sql = await fs.readFile('src/app/resources/create_database.sql', 'utf8');
     Logger.info("Resetting Database...");
-    promises.push(getPool().query(sql));  // sync call to recreate DB
+    promises.push(getPool()?.query(sql));  // sync call to recreate DB
 
     const files = await fs.readdir(imageDirectory);
     for (const file of files) {
@@ -27,9 +28,9 @@ const loadData = async (): Promise<any> => {
     await populateDefaultUsers();
     try {
         const sql = await fs.readFile('src/app/resources/resample_database.sql', 'utf8');
-        await getPool().query(sql);
+        await getPool()?.query(sql);
     } catch (err) {
-        Logger.error(err.sql);
+        Logger.error((err as mysql.Query).sql);
         throw err;
     }
 
@@ -57,9 +58,9 @@ const populateDefaultUsers = async (): Promise<void> => {
     await Promise.all(usersData.map((user: any) => changePasswordToHash(user, passwordIndex)));
 
     try {
-        await getPool().query(createSQL, [usersData]);
+        await getPool()?.query(createSQL, [usersData]);
     } catch (err) {
-        Logger.error(err.sql);
+        Logger.error((err as mysql.Query).sql);
         throw err;
     }
 }
@@ -70,12 +71,15 @@ async function changePasswordToHash(user:any, passwordIndex:number) {
 
 const executeSql = async (sql: string): Promise<RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader> => {
     try {
-        const [rows] = await getPool().query(sql);
-        return rows;
+        const queryResult = await getPool()?.query(sql);
+        if (queryResult) {
+            return queryResult[0];
+        }
     } catch (err) {
-        Logger.error(err.sql);
+        Logger.error((err as mysql.Query).sql);
         throw err;
     }
+    return [];
 };
 
 export {resetDb, loadData, executeSql}
