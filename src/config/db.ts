@@ -15,14 +15,13 @@ const connect = async (): Promise<void> => {
         user: process.env.SENG365_MYSQL_USER,
         password: process.env.SENG365_MYSQL_PASSWORD,
         database: process.env.SENG365_MYSQL_DATABASE,
-        port: parseInt(process.env.SENG365_MYSQL_PORT || '4000', 10) || 3306
+        port: parseInt(process.env.SENG365_MYSQL_PORT || '3306', 10)
     });
     await state.pool.getConnection(); // Check connection
-    Logger.info(`Successfully connected to database`)
-    return
+    Logger.info(`Successfully connected to database`);
+    return;
 };
 
-// technically typed : () => mysql.Pool
 const getPool = () => {
     return state.pool;
 };
