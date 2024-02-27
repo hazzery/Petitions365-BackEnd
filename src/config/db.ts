@@ -22,7 +22,7 @@ const connect = async (): Promise<void> => {
     return;
 };
 
-const getPool = () => {
+const getPool = (): mysql.Pool => {
     return state.pool;
 };
 

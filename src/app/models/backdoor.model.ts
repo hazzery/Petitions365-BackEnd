@@ -1,13 +1,13 @@
-const defaultPhotoDirectory = './storage/default/';
 import * as defaultUsers from "../resources/default_users.json";
-const imageDirectory = './storage/images/';
+import {OkPacket, ResultSetHeader, RowDataPacket} from "mysql2";
 import * as passwords from "../services/passwords";
 import Logger from "../../config/logger";
 import {getPool} from "../../config/db";
-
-import {OkPacket, ResultSetHeader, RowDataPacket} from "mysql2";
 import mysql from "mysql2/promise";
 import fs from 'mz/fs';
+
+const defaultPhotoDirectory = './storage/default/';
+const imageDirectory = './storage/images/';
 
 const resetDb = async (): Promise<any> => {
     const promises = [];
