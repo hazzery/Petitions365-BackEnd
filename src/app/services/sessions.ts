@@ -13,6 +13,6 @@ export function createSession(userId: number): string {
     return token;
 }
 
-export function deleteSession(token: string): void {
-    sessions.delete(token);
+export function deleteSession(token: string): boolean {
+    return sessions.delete(token);
 }

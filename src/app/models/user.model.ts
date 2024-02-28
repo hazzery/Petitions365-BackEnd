@@ -1,5 +1,5 @@
 import {UserLogin, UserRegister} from "../types/requestBodySchemaInterfaces";
-import {createSession} from "../services/sessions";
+import {createSession, deleteSession} from "../services/sessions";
 import Logger from "../../config/logger";
 import {getPool} from "../../config/db";
 
@@ -48,3 +48,10 @@ export async function loginUser(data: UserLogin): Promise<[number, string, objec
     return [200, "User logged in!", {userId: users[0].id, token: createSession(users[0].id)}];
 }
 
+export async function logoutUser(token: string): Promise<[number, string]> {
+    if (deleteSession(token)) {
+        return [200, "User logged out!"];
+    } else {
+        return [401, "Cannot log out if you are not logged in."];
+    }
+}
