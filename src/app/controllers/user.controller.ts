@@ -10,7 +10,7 @@ import Logger from '../../config/logger';
 const ajv = new Ajv({removeAdditional: 'all'});
 addFormats(ajv);
 
-async function handler<Input, Output extends object | void>(
+async function processRequestBody<Input, Output extends object | void>(
     request: Request,
     response: Response,
     schema: object,
@@ -36,11 +36,11 @@ async function handler<Input, Output extends object | void>(
 }
 
 export async function register(request: Request, response: Response): Promise<void> {
-    await handler(request, response, schemas.user_register, users.registerUser);
+    await processRequestBody(request, response, schemas.user_register, users.registerUser);
 }
 
 export async function login(request: Request, response: Response): Promise<void> {
-    await handler(request, response, schemas.user_login, users.loginUser);
+    await processRequestBody(request, response, schemas.user_login, users.loginUser);
 }
 
 export async function logout(request: Request, response: Response): Promise<void> {
