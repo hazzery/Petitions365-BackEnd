@@ -1,4 +1,4 @@
-import {UserRegister} from "../types/requestBodySchemaInterfaces";
+import {UserLogin, UserRegister} from "../types/requestBodySchemaInterfaces";
 import Logger from "../../config/logger";
 import {getPool} from "../../config/db";
 
@@ -39,7 +39,7 @@ export const registerUser = async (data: UserRegister): Promise<[number, string,
     }
 }
 
-export const loginUser = async (data: {email: string, password: string}): Promise<[number, string, object]> => {
+export const loginUser = async (data: UserLogin): Promise<[number, string, object]> => {
     const result = await runSQL(`SELECT id FROM user WHERE email = '${data.email}' AND password = '${data.password}'`);
     const users = result[0] as { id: number }[]
     if (users.length === 0) {
