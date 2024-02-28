@@ -1,12 +1,9 @@
 import {UserLogin, UserRegister} from "../types/requestBodySchemaInterfaces";
+import {createSession} from "../services/sessions";
 import Logger from "../../config/logger";
 import {getPool} from "../../config/db";
 
 const MINIMUM_PASSWORD_LENGTH = 6;
-
-const generateToken = () => {
-    return Math.random().toString(36).substring(2); // remove `0.`
-};
 
 const runSQL = async (sql: string) => {
     const connection = await getPool()?.getConnection();
@@ -45,6 +42,6 @@ export const loginUser = async (data: UserLogin): Promise<[number, string, objec
     if (users.length === 0) {
         return [401, "Invalid email or password", null];
     }
-    return [200, "User logged in!", {userId: users[0].id, token: generateToken()}];
+    return [200, "User logged in!", {userId: users[0].id, token: createSession(users[0].id)}];
 }
 
