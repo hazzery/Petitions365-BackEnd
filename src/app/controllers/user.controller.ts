@@ -10,76 +10,76 @@ const ajv = new Ajv({removeAdditional: 'all'});
 addFormats(ajv);
 
 const handler = async <Input, Output extends object | void>(
-    req: Request,
-    res: Response,
+    request: Request,
+    response: Response,
     schema: object,
     callback: (body: Input) => Promise<[number, string, Output]>
 ): Promise<Output> => {
     try {
         const validator = ajv.compile<Input>(schema);
-        if (!validator(req.body)) {
-            res.statusMessage = `Bad Request: ${ajv.errorsText(validator.errors)}`;
-            res.status(400).send();
+        if (!validator(request.body)) {
+            response.statusMessage = `Bad Request: ${ajv.errorsText(validator.errors)}`;
+            response.status(400).send();
         } else {
-            const [status, message, result] = await callback(req.body);
+            const [status, message, result] = await callback(request.body);
             Logger.info(message);
-            res.statusMessage = message;
-            res.status(status).send(result);
+            response.statusMessage = message;
+            response.status(status).send(result);
             return result;
         }
     } catch (err) {
         Logger.error(err);
-        res.statusMessage = "Internal Server Error";
-        res.status(500).send();
+        response.statusMessage = "Internal Server Error";
+        response.status(500).send();
     }
 }
 
-const register = async (req: Request, res: Response): Promise<void> => {
-    await handler(req, res, schemas.user_register, users.registerUser);
+const register = async (request: Request, response: Response): Promise<void> => {
+    await handler(request, response, schemas.user_register, users.registerUser);
 }
 
-const login = async (req: Request, res: Response): Promise<void> => {
-    await handler(req, res, schemas.user_login, users.loginUser);
+const login = async (request: Request, response: Response): Promise<void> => {
+    await handler(request, response, schemas.user_login, users.loginUser);
 }
 
-const logout = async (req: Request, res: Response): Promise<void> => {
+const logout = async (request: Request, response: Response): Promise<void> => {
     try{
         // Your code goes here
-        res.statusMessage = "Not Implemented Yet!";
-        res.status(501).send();
+        response.statusMessage = "Not Implemented Yet!";
+        response.status(501).send();
         return;
     } catch (err) {
         Logger.error(err);
-        res.statusMessage = "Internal Server Error";
-        res.status(500).send();
-        return;
-    }
-}
-
-const view = async (req: Request, res: Response): Promise<void> => {
-    try{
-        // Your code goes here
-        res.statusMessage = "Not Implemented Yet!";
-        res.status(501).send();
-        return;
-    } catch (err) {
-        Logger.error(err);
-        res.statusMessage = "Internal Server Error";
-        res.status(500).send();
+        response.statusMessage = "Internal Server Error";
+        response.status(500).send();
         return;
     }
 }
 
-const update = async (req: Request, res: Response): Promise<void> => {
+const view = async (request: Request, response: Response): Promise<void> => {
     try{
         // Your code goes here
-        res.statusMessage = "Not Implemented Yet!";
-        res.status(501).send();
+        response.statusMessage = "Not Implemented Yet!";
+        response.status(501).send();
         return;
     } catch (err) {
         Logger.error(err);
-        res.statusMessage = "Internal Server Error";
-        res.status(500).send();
+        response.statusMessage = "Internal Server Error";
+        response.status(500).send();
+        return;
+    }
+}
+
+const update = async (request: Request, response: Response): Promise<void> => {
+    try{
+        // Your code goes here
+        response.statusMessage = "Not Implemented Yet!";
+        response.status(501).send();
+        return;
+    } catch (err) {
+        Logger.error(err);
+        response.statusMessage = "Internal Server Error";
+        response.status(500).send();
         return;
     }
 }
