@@ -39,17 +39,7 @@ const register = async (req: Request, res: Response): Promise<void> => {
 }
 
 const login = async (req: Request, res: Response): Promise<void> => {
-    try{
-        // Your code goes here
-        res.statusMessage = "Not Implemented Yet!";
-        res.status(501).send();
-        return;
-    } catch (err) {
-        Logger.error(err);
-        res.statusMessage = "Internal Server Error";
-        res.status(500).send();
-        return;
-    }
+    await handler(req, res, schemas.user_login, users.loginUser);
 }
 
 const logout = async (req: Request, res: Response): Promise<void> => {
