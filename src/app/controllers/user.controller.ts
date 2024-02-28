@@ -2,23 +2,29 @@ import * as schemas from '../resources/schemas.json';
 import * as users from '../models/user.model';
 import {Request, Response} from "express";
 import Logger from '../../config/logger';
-import Ajv, {JSONSchemaType} from 'ajv';
+import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 
 
 const ajv = new Ajv({removeAdditional: 'all'});
 addFormats(ajv);
 
-const handler = async <T>(req: Request, res: Response, schema: object, callback: (body: T) => any) => {
+const handler = async <Input, Output extends object | void>(
+    req: Request,
+    res: Response,
+    schema: object,
+    callback: (body: Input) => Promise<[number, string, Output]>
+): Promise<Output> => {
     try {
-        const validator = ajv.compile<T>(schema);
+        const validator = ajv.compile<Input>(schema);
         if (!validator(req.body)) {
             res.statusMessage = `Bad Request: ${ajv.errorsText(validator.errors)}`;
             res.status(400).send();
         } else {
-            const result = await callback(req.body);
-            res.statusMessage = "User has been registered!";
-            res.status(201).send();
+            const [status, message, result] = await callback(req.body);
+            Logger.info(message);
+            res.statusMessage = message;
+            res.status(status).send(result);
             return result;
         }
     } catch (err) {
