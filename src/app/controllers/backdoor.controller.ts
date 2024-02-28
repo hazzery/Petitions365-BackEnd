@@ -4,52 +4,52 @@ import * as Backdoor from '../models/backdoor.model';
 import Logger from '../../config/logger';
 
 
-export async function resetDb(req: Request, res: Response): Promise<void> {
+export async function resetDb(request: Request, response: Response): Promise<void> {
     try {
         await Backdoor.resetDb();
-        res.statusMessage = "OK";
-        res.status(200).send();
+        response.statusMessage = "OK";
+        response.status(200).send();
     } catch (err) {
         Logger.error(err);
-        res.statusMessage = "Internal Server Error";
-        res.status(500).send();
+        response.statusMessage = "Internal Server Error";
+        response.status(500).send();
     }
 }
 
-export async function resample(req: Request, res: Response): Promise<void> {
+export async function resample(request: Request, response: Response): Promise<void> {
     try {
         await Backdoor.loadData();
-        res.statusMessage = "Created";
-        res.status(201).send();
+        response.statusMessage = "Created";
+        response.status(201).send();
     } catch (err) {
         Logger.error(err);
-        res.statusMessage = "Internal Server Error";
-        res.status(500).send();
+        response.statusMessage = "Internal Server Error";
+        response.status(500).send();
     }
 }
 
-export async function reload(req: Request, res: Response): Promise<void> {
+export async function reload(request: Request, response: Response): Promise<void> {
     try {
         await Backdoor.resetDb();
         await Backdoor.loadData();
-        res.statusMessage = "Created";
-        res.status(201).send();
+        response.statusMessage = "Created";
+        response.status(201).send();
     } catch (err) {
         Logger.error(err);
-        res.statusMessage = "Internal Server Error";
-        res.status(500).send();
+        response.statusMessage = "Internal Server Error";
+        response.status(500).send();
     }
 }
 
-export async function executeSql(req: Request, res: Response): Promise<void> {
-    const sqlCommand = String(req.body);
+export async function executeSql(request: Request, response: Response): Promise<void> {
+    const sqlCommand = String(request.body);
     try {
         const results = await Backdoor.executeSql(sqlCommand);
-        res.statusMessage = 'OK';
-        res.status(200).json(results);
+        response.statusMessage = 'OK';
+        response.status(200).json(results);
     } catch (err) {
         if (!err.hasBeenLogged) Logger.error(err);
-        res.statusMessage = 'Internal Server Error';
-        res.status(500).send();
+        response.statusMessage = 'Internal Server Error';
+        response.status(500).send();
     }
 }

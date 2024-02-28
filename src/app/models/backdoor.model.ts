@@ -67,7 +67,7 @@ async function populateDefaultUsers(): Promise<void> {
     }
 }
 
-async function changePasswordToHash(user: any, passwordIndex: number) {
+async function changePasswordToHash(user:any, passwordIndex:number) {
     user[passwordIndex] = await passwords.hash(user[passwordIndex]);
 }
 

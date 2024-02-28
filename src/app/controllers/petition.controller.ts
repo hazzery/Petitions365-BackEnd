@@ -3,87 +3,87 @@ import {Request, Response} from "express";
 import Logger from '../../config/logger';
 
 
-export async function getAllPetitions(req: Request, res: Response): Promise<void> {
+export async function getAllPetitions(request: Request, response: Response): Promise<void> {
     try {
         // Your code goes here
-        res.statusMessage = "Not Implemented Yet!";
-        res.status(501).send();
+        response.statusMessage = "Not Implemented Yet!";
+        response.status(501).send();
         return;
     } catch (err) {
         Logger.error(err);
-        res.statusMessage = "Internal Server Error";
-        res.status(500).send();
+        response.statusMessage = "Internal Server Error";
+        response.status(500).send();
         return;
     }
 }
 
 
-export async function getPetition(req: Request, res: Response): Promise<void> {
+export async function getPetition(request: Request, response: Response): Promise<void> {
     try {
         // Your code goes here
-        res.statusMessage = "Not Implemented Yet!";
-        res.status(501).send();
+        response.statusMessage = "Not Implemented Yet!";
+        response.status(501).send();
         return;
     } catch (err) {
         Logger.error(err);
-        res.statusMessage = "Internal Server Error";
-        res.status(500).send();
+        response.statusMessage = "Internal Server Error";
+        response.status(500).send();
         return;
     }
 }
 
-export async function addPetition(req: Request, res: Response): Promise<void> {
+export async function addPetition(request: Request, response: Response): Promise<void> {
     try {
         // Your code goes here
-        res.statusMessage = "Not Implemented Yet!";
-        res.status(501).send();
+        response.statusMessage = "Not Implemented Yet!";
+        response.status(501).send();
         return;
     } catch (err) {
         Logger.error(err);
-        res.statusMessage = "Internal Server Error";
-        res.status(500).send();
+        response.statusMessage = "Internal Server Error";
+        response.status(500).send();
         return;
     }
 }
 
-export async function editPetition(req: Request, res: Response): Promise<void> {
+export async function editPetition(request: Request, response: Response): Promise<void> {
     try {
         // Your code goes here
-        res.statusMessage = "Not Implemented Yet!";
-        res.status(501).send();
+        response.statusMessage = "Not Implemented Yet!";
+        response.status(501).send();
         return;
     } catch (err) {
         Logger.error(err);
-        res.statusMessage = "Internal Server Error";
-        res.status(500).send();
+        response.statusMessage = "Internal Server Error";
+        response.status(500).send();
         return;
     }
 }
 
-export async function deletePetition(req: Request, res: Response): Promise<void> {
+export async function deletePetition(request: Request, response: Response): Promise<void> {
     try {
         // Your code goes here
-        res.statusMessage = "Not Implemented Yet!";
-        res.status(501).send();
+        response.statusMessage = "Not Implemented Yet!";
+        response.status(501).send();
         return;
     } catch (err) {
         Logger.error(err);
-        res.statusMessage = "Internal Server Error";
-        res.status(500).send();
+        response.statusMessage = "Internal Server Error";
+        response.status(500).send();
         return;
     }
 }
 
-export async function getCategories(req: Request, res: Response): Promise<void> {
+export async function getCategories(request: Request, response: Response): Promise<void> {
     try {
         // Your code goes here
-        res.statusMessage = "Not Implemented Yet!";
-        res.status(501).send();
+        response.statusMessage = "Not Implemented Yet!";
+        response.status(501).send();
         return;
     } catch (err) {
         Logger.error(err);
-        res.statusMessage = "Internal Server Error";
-        res.status(500).send();
+        response.statusMessage = "Internal Server Error";
+        response.status(500).send();
         return;
     }
 }
