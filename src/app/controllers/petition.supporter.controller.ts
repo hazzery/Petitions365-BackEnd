@@ -1,9 +1,10 @@
 import {Request, Response} from "express";
+
 import Logger from "../../config/logger";
 
 
-const getAllSupportersForPetition = async (req: Request, res: Response): Promise<void> => {
-    try{
+export async function getAllSupportersForPetition(req: Request, res: Response): Promise<void> {
+    try {
         // Your code goes here
         res.statusMessage = "Not Implemented Yet!";
         res.status(501).send();
@@ -16,8 +17,8 @@ const getAllSupportersForPetition = async (req: Request, res: Response): Promise
     }
 }
 
-const addSupporter = async (req: Request, res: Response): Promise<void> => {
-    try{
+export async function addSupporter(req: Request, res: Response): Promise<void> {
+    try {
         // Your code goes here
         res.statusMessage = "Not Implemented Yet!";
         res.status(501).send();
@@ -29,5 +30,3 @@ const addSupporter = async (req: Request, res: Response): Promise<void> => {
         return;
     }
 }
-
-export {getAllSupportersForPetition, addSupporter}

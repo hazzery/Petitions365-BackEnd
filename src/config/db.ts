@@ -1,13 +1,16 @@
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
+
 import Logger from './logger';
+
+
 dotenv.config();
 
 const state = {
     pool: null as mysql.Pool | null
 };
 
-const connect = async (): Promise<void> => {
+export async function connect(): Promise<void> {
     state.pool = mysql.createPool({
         connectionLimit: 100,
         multipleStatements: true,
@@ -20,10 +23,8 @@ const connect = async (): Promise<void> => {
     await state.pool.getConnection(); // Check connection
     Logger.info(`Successfully connected to database`);
     return;
-};
+}
 
-const getPool = (): mysql.Pool => {
+export function getPool(): mysql.Pool {
     return state.pool;
-};
-
-export {connect, getPool}
+}

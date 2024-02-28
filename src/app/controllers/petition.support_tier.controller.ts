@@ -1,8 +1,10 @@
 import {Request, Response} from "express";
+
 import Logger from "../../config/logger";
 
-const addSupportTier = async (req: Request, res: Response): Promise<void> => {
-    try{
+
+export async function addSupportTier(req: Request, res: Response): Promise<void> {
+    try {
         // Your code goes here
         res.statusMessage = "Not Implemented Yet!";
         res.status(501).send();
@@ -15,8 +17,8 @@ const addSupportTier = async (req: Request, res: Response): Promise<void> => {
     }
 }
 
-const editSupportTier = async (req: Request, res: Response): Promise<void> => {
-    try{
+export async function editSupportTier(req: Request, res: Response): Promise<void> {
+    try {
         // Your code goes here
         res.statusMessage = "Not Implemented Yet!";
         res.status(501).send();
@@ -29,8 +31,8 @@ const editSupportTier = async (req: Request, res: Response): Promise<void> => {
     }
 }
 
-const deleteSupportTier = async (req: Request, res: Response): Promise<void> => {
-    try{
+export async function deleteSupportTier(req: Request, res: Response): Promise<void> {
+    try {
         // Your code goes here
         res.statusMessage = "Not Implemented Yet!";
         res.status(501).send();
@@ -42,5 +44,3 @@ const deleteSupportTier = async (req: Request, res: Response): Promise<void> => 
         return;
     }
 }
-
-export {addSupportTier, editSupportTier, deleteSupportTier};

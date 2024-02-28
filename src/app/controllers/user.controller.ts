@@ -1,20 +1,21 @@
+import {Request, Response} from "express";
+import addFormats from 'ajv-formats';
+import Ajv from 'ajv';
+
 import * as schemas from '../resources/schemas.json';
 import * as users from '../models/user.model';
-import {Request, Response} from "express";
 import Logger from '../../config/logger';
-import Ajv from 'ajv';
-import addFormats from 'ajv-formats';
 
 
 const ajv = new Ajv({removeAdditional: 'all'});
 addFormats(ajv);
 
-const handler = async <Input, Output extends object | void>(
+async function handler<Input, Output extends object | void>(
     request: Request,
     response: Response,
     schema: object,
     callback: (body: Input) => Promise<[number, string, Output]>
-): Promise<Output> => {
+): Promise<Output> {
     try {
         const validator = ajv.compile<Input>(schema);
         if (!validator(request.body)) {
@@ -34,16 +35,16 @@ const handler = async <Input, Output extends object | void>(
     }
 }
 
-const register = async (request: Request, response: Response): Promise<void> => {
+export async function register(request: Request, response: Response): Promise<void> {
     await handler(request, response, schemas.user_register, users.registerUser);
 }
 
-const login = async (request: Request, response: Response): Promise<void> => {
+export async function login(request: Request, response: Response): Promise<void> {
     await handler(request, response, schemas.user_login, users.loginUser);
 }
 
-const logout = async (request: Request, response: Response): Promise<void> => {
-    try{
+export async function logout(request: Request, response: Response): Promise<void> {
+    try {
         // Your code goes here
         response.statusMessage = "Not Implemented Yet!";
         response.status(501).send();
@@ -56,8 +57,8 @@ const logout = async (request: Request, response: Response): Promise<void> => {
     }
 }
 
-const view = async (request: Request, response: Response): Promise<void> => {
-    try{
+export async function view(request: Request, response: Response): Promise<void> {
+    try {
         // Your code goes here
         response.statusMessage = "Not Implemented Yet!";
         response.status(501).send();
@@ -70,8 +71,8 @@ const view = async (request: Request, response: Response): Promise<void> => {
     }
 }
 
-const update = async (request: Request, response: Response): Promise<void> => {
-    try{
+export async function update(request: Request, response: Response): Promise<void> {
+    try {
         // Your code goes here
         response.statusMessage = "Not Implemented Yet!";
         response.status(501).send();
@@ -83,5 +84,3 @@ const update = async (request: Request, response: Response): Promise<void> => {
         return;
     }
 }
-
-export {register, login, logout, view, update}

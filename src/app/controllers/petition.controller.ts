@@ -1,8 +1,10 @@
 import {Request, Response} from "express";
+
 import Logger from '../../config/logger';
 
-const getAllPetitions = async (req: Request, res: Response): Promise<void> => {
-    try{
+
+export async function getAllPetitions(req: Request, res: Response): Promise<void> {
+    try {
         // Your code goes here
         res.statusMessage = "Not Implemented Yet!";
         res.status(501).send();
@@ -16,8 +18,8 @@ const getAllPetitions = async (req: Request, res: Response): Promise<void> => {
 }
 
 
-const getPetition = async (req: Request, res: Response): Promise<void> => {
-    try{
+export async function getPetition(req: Request, res: Response): Promise<void> {
+    try {
         // Your code goes here
         res.statusMessage = "Not Implemented Yet!";
         res.status(501).send();
@@ -30,8 +32,8 @@ const getPetition = async (req: Request, res: Response): Promise<void> => {
     }
 }
 
-const addPetition = async (req: Request, res: Response): Promise<void> => {
-    try{
+export async function addPetition(req: Request, res: Response): Promise<void> {
+    try {
         // Your code goes here
         res.statusMessage = "Not Implemented Yet!";
         res.status(501).send();
@@ -44,8 +46,8 @@ const addPetition = async (req: Request, res: Response): Promise<void> => {
     }
 }
 
-const editPetition = async (req: Request, res: Response): Promise<void> => {
-    try{
+export async function editPetition(req: Request, res: Response): Promise<void> {
+    try {
         // Your code goes here
         res.statusMessage = "Not Implemented Yet!";
         res.status(501).send();
@@ -58,8 +60,8 @@ const editPetition = async (req: Request, res: Response): Promise<void> => {
     }
 }
 
-const deletePetition = async (req: Request, res: Response): Promise<void> => {
-    try{
+export async function deletePetition(req: Request, res: Response): Promise<void> {
+    try {
         // Your code goes here
         res.statusMessage = "Not Implemented Yet!";
         res.status(501).send();
@@ -72,8 +74,8 @@ const deletePetition = async (req: Request, res: Response): Promise<void> => {
     }
 }
 
-const getCategories = async(req: Request, res: Response): Promise<void> => {
-    try{
+export async function getCategories(req: Request, res: Response): Promise<void> {
+    try {
         // Your code goes here
         res.statusMessage = "Not Implemented Yet!";
         res.status(501).send();
@@ -85,5 +87,3 @@ const getCategories = async(req: Request, res: Response): Promise<void> => {
         return;
     }
 }
-
-export {getAllPetitions, getPetition, addPetition, editPetition, deletePetition, getCategories};

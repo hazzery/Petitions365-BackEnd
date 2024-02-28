@@ -1,8 +1,10 @@
 import {Request, Response} from "express";
+
 import Logger from "../../config/logger";
 
-const getImage = async (req: Request, res: Response): Promise<void> => {
-    try{
+
+export async function getImage(req: Request, res: Response): Promise<void> {
+    try {
         // Your code goes here
         res.statusMessage = "Not Implemented Yet!";
         res.status(501).send();
@@ -15,8 +17,8 @@ const getImage = async (req: Request, res: Response): Promise<void> => {
     }
 }
 
-const setImage = async (req: Request, res: Response): Promise<void> => {
-    try{
+export async function setImage(req: Request, res: Response): Promise<void> {
+    try {
         // Your code goes here
         res.statusMessage = "Not Implemented Yet!";
         res.status(501).send();
@@ -29,8 +31,8 @@ const setImage = async (req: Request, res: Response): Promise<void> => {
     }
 }
 
-const deleteImage = async (req: Request, res: Response): Promise<void> => {
-    try{
+export async function deleteImage(req: Request, res: Response): Promise<void> {
+    try {
         // Your code goes here
         res.statusMessage = "Not Implemented Yet!";
         res.status(501).send();
@@ -42,5 +44,3 @@ const deleteImage = async (req: Request, res: Response): Promise<void> => {
         return;
     }
 }
-
-export {getImage, setImage, deleteImage}

@@ -1,31 +1,32 @@
-import {Express} from "express";
-import {rootUrl} from "./base.routes";
-import * as petition from '../controllers/petition.controller'
-import * as petitionImage from '../controllers/petition.image.controller'
-import * as supportTiers from "../controllers/petition.support_tier.controller";
-import * as supporter from "../controllers/petition.supporter.controller";
+import {Express} from 'express';
+
+import * as supportTiers from '../controllers/petition.support_tier.controller';
+import * as supporter from '../controllers/petition.supporter.controller';
+import * as petitionImage from '../controllers/petition.image.controller';
+import * as petition from '../controllers/petition.controller';
+import {rootUrl} from './base.routes';
 
 module.exports = (app: Express) => {
-    app.route(rootUrl+'/petitions')
+    app.route(rootUrl + '/petitions')
         .get(petition.getAllPetitions)
         .post(petition.addPetition);
 
-    app.route(rootUrl+'/petitions/categories')
+    app.route(rootUrl + '/petitions/categories')
         .get(petition.getCategories);
 
-    app.route(rootUrl+'/petitions/:id')
+    app.route(rootUrl + '/petitions/:id')
         .get(petition.getPetition)
         .patch(petition.editPetition)
         .delete(petition.deletePetition);
 
-    app.route(rootUrl+'/petitions/:id/image')
+    app.route(rootUrl + '/petitions/:id/image')
         .get(petitionImage.getImage)
         .put(petitionImage.setImage);
 
-    app.route(rootUrl+'/petitions/:id/supportTiers')
+    app.route(rootUrl + '/petitions/:id/supportTiers')
         .put(supportTiers.addSupportTier);
 
-    app.route(rootUrl+'/petitions/:id/supportTiers/:tierId')
+    app.route(rootUrl + '/petitions/:id/supportTiers/:tierId')
         .patch(supportTiers.editSupportTier)
         .delete(supportTiers.deleteSupportTier);
 

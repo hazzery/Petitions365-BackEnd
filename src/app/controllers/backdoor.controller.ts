@@ -1,8 +1,10 @@
 import {Request, Response} from "express";
-import Logger from '../../config/logger';
-import * as Backdoor from '../models/backdoor.model';
 
-const resetDb = async (req: Request, res: Response):Promise<void> => {
+import * as Backdoor from '../models/backdoor.model';
+import Logger from '../../config/logger';
+
+
+export async function resetDb(req: Request, res: Response): Promise<void> {
     try {
         await Backdoor.resetDb();
         res.statusMessage = "OK";
@@ -12,9 +14,9 @@ const resetDb = async (req: Request, res: Response):Promise<void> => {
         res.statusMessage = "Internal Server Error";
         res.status(500).send();
     }
-};
+}
 
-const resample = async (req: Request, res: Response):Promise<void> => {
+export async function resample(req: Request, res: Response): Promise<void> {
     try {
         await Backdoor.loadData();
         res.statusMessage = "Created";
@@ -24,9 +26,9 @@ const resample = async (req: Request, res: Response):Promise<void> => {
         res.statusMessage = "Internal Server Error";
         res.status(500).send();
     }
-};
+}
 
-const reload = async (req: Request, res: Response):Promise<void> => {
+export async function reload(req: Request, res: Response): Promise<void> {
     try {
         await Backdoor.resetDb();
         await Backdoor.loadData();
@@ -37,9 +39,9 @@ const reload = async (req: Request, res: Response):Promise<void> => {
         res.statusMessage = "Internal Server Error";
         res.status(500).send();
     }
-};
+}
 
-const executeSql = async (req: Request, res: Response):Promise<void> => {
+export async function executeSql(req: Request, res: Response): Promise<void> {
     const sqlCommand = String(req.body);
     try {
         const results = await Backdoor.executeSql(sqlCommand);
@@ -50,6 +52,4 @@ const executeSql = async (req: Request, res: Response):Promise<void> => {
         res.statusMessage = 'Internal Server Error';
         res.status(500).send();
     }
-};
-
-export {resetDb, resample, reload, executeSql}
+}

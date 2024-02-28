@@ -1,5 +1,6 @@
 import winston from "winston";
 
+
 const levels = {
     error: 0,
     warn: 1,
@@ -37,11 +38,9 @@ const transports = [
     })
 ];
 
-const Logger = winston.createLogger({
+export default winston.createLogger({
     level: 'debug',
     levels,
     format,
     transports
 });
-
-export default Logger;

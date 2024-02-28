@@ -1,6 +1,7 @@
 import express from './config/express';
-import { connect } from './config/db';
 import Logger from './config/logger';
+import {connect} from './config/db';
+
 
 const app = express();
 const port = process.env.PORT || 4941;

@@ -1,8 +1,10 @@
-import express from "express"
-import bodyParser from "body-parser"
-import allowCrossOriginRequestsMiddleware from "../app/middleware/cors.middleware"
-import Logger from "./logger"
+import bodyParser from "body-parser";
+import express from "express";
+
+import allowCrossOriginRequestsMiddleware from "../app/middleware/cors.middleware";
 import {rootUrl} from "../app/routes/base.routes";
+import Logger from "./logger";
+
 
 export default () => {
     const app = express();
@@ -15,7 +17,7 @@ export default () => {
 
     // Debug
     app.use((req, res, next) => {
-        if(req.path !== '/'){
+        if (req.path !== '/') {
             Logger.http(`##### ${req.method} ${req.path} #####`);
         }
         next();

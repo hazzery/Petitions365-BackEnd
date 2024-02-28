@@ -1,3 +1,1 @@
-const rootUrl = "/api/v1"
-
-export {rootUrl}
+export const rootUrl = "/api/v1";
