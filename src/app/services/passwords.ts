@@ -1,9 +1,10 @@
+import * as bcrypt from 'bcrypt';
+
 export async function hash(password: string): Promise<string> {
-    // Todo: update this to encrypt the password
-    return password
+    const saltRounds = 10;
+    return await bcrypt.hash(password, saltRounds);
 }
 
-export async function compare(password: string, comp: string): Promise<boolean> {
-    // Todo: (suggested) update this to compare the encrypted passwords
-    return (password === comp)
+export async function compare(password: string, hashedPassword: string): Promise<boolean> {
+    return await bcrypt.compare(password, hashedPassword);
 }
