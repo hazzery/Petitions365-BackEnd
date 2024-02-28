@@ -1,5 +1,6 @@
 import {UserLogin, UserRegister} from "../types/requestBodySchemaInterfaces";
 import {createSession, deleteSession} from "../services/sessions";
+import {compare, hash} from "../services/passwords";
 import Logger from "../../config/logger";
 import {getPool} from "../../config/db";
 
@@ -24,9 +25,10 @@ export async function registerUser(data: UserRegister): Promise<[number, string,
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
         return [400, "Invalid email address", null];
     }
+    const hashedPassword = await hash(data.password);
     try {
         await runSQL(`INSERT INTO user (email, first_name, last_name, password)
-                      VALUES ('${data.email}', '${data.firstName}', '${data.lastName}', '${data.password}')`);
+                      VALUES ('${data.email}', '${data.firstName}', '${data.lastName}', '${hashedPassword}')`);
         return [200, "User registered!", null];
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') {
@@ -37,15 +39,18 @@ export async function registerUser(data: UserRegister): Promise<[number, string,
 }
 
 export async function loginUser(data: UserLogin): Promise<[number, string, object]> {
-    const result = await runSQL(`SELECT id
+    const result = await runSQL(`SELECT id, password
                                  FROM user
-                                 WHERE email = '${data.email}'
-                                   AND password = '${data.password}'`);
-    const users = result[0] as { id: number }[]
+                                 WHERE email = '${data.email}'`);
+    const users = result[0] as { id: number, password: string }[]
     if (users.length === 0) {
-        return [401, "Invalid email or password", null];
+        return [401, "Email not registered", null];
     }
-    return [200, "User logged in!", {userId: users[0].id, token: createSession(users[0].id)}];
+    if (await compare(data.password, users[0].password)) {
+        return [200, "User logged in!", {userId: users[0].id, token: createSession(users[0].id)}];
+    } else {
+        return [401, "Incorrect password", null];
+    }
 }
 
 export async function logoutUser(token: string): Promise<[number, string]> {
