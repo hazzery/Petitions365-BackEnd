@@ -5,8 +5,6 @@ import Logger from "../../config/logger";
 import {getPool} from "../../config/db";
 
 
-const MINIMUM_PASSWORD_LENGTH = 6;
-
 async function runSQL(sql: string): Promise<any> {
     const connection = await getPool()?.getConnection();
     if (connection === undefined) {
@@ -18,13 +16,6 @@ async function runSQL(sql: string): Promise<any> {
 }
 
 export async function registerUser(data: UserRegister): Promise<[number, string, void]> {
-    if (data.password.length < MINIMUM_PASSWORD_LENGTH) {
-        return [400, `Password must be at least ${MINIMUM_PASSWORD_LENGTH} characters.`, null];
-    }
-    // This regex looks gross, but confirms email approximately matches this format: 'x@y.z'
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-        return [400, "Invalid email address", null];
-    }
     const hashedPassword = await hash(data.password);
     try {
         await runSQL(`INSERT INTO user (email, first_name, last_name, password)
