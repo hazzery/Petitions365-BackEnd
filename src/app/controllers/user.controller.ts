@@ -10,6 +10,10 @@ import Logger from '../../config/logger';
 const ajv = new Ajv({removeAdditional: 'all'});
 addFormats(ajv);
 
+function authorisation(request: Request): string {
+    return request.headers["x-authorization"] as string;
+}
+
 async function processRequestBody<Input, Output extends object | void>(
     request: Request,
     response: Response,
@@ -44,7 +48,7 @@ export async function login(request: Request, response: Response): Promise<void>
 }
 
 export async function logout(request: Request, response: Response): Promise<void> {
-    const token = request.headers["x-authorization"] as string;
+    const token = authorisation(request);
     if (token === undefined) {
         Logger.warn("Unauthorized: No token provided!");
         response.statusMessage = "Unauthorized: No token provided!";
@@ -58,17 +62,18 @@ export async function logout(request: Request, response: Response): Promise<void
 }
 
 export async function view(request: Request, response: Response): Promise<void> {
-    try {
-        // Your code goes here
-        response.statusMessage = "Not Implemented Yet!";
-        response.status(501).send();
-        return;
-    } catch (err) {
-        Logger.error(err);
-        response.statusMessage = "Internal Server Error";
-        response.status(500).send();
+    const userId = Number(request.params.id);
+    if (userId === undefined || isNaN(userId) || userId <= 0) {
+        Logger.warn("Bad Request: Invalid user ID");
+        response.statusMessage = "Bad Request: Invalid user ID";
+        response.status(400).send();
         return;
     }
+    const currentUser = authorisation(request);
+    const [status, message, user] = await users.viewUser(userId, currentUser);
+    response.statusMessage = message;
+    response.status(status).send(user);
+    return;
 }
 
 export async function update(request: Request, response: Response): Promise<void> {

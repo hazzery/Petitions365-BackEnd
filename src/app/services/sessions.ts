@@ -16,3 +16,7 @@ export function createSession(userId: number): string {
 export function deleteSession(token: string): boolean {
     return sessions.delete(token);
 }
+
+export function getUserId(token: string): number | undefined {
+    return sessions.get(token);
+}

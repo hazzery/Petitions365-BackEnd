@@ -1,5 +1,5 @@
 import {UserLogin, UserRegister} from "../types/requestBodySchemaInterfaces";
-import {createSession, deleteSession} from "../services/sessions";
+import {createSession, deleteSession, getUserId} from "../services/sessions";
 import {compare, hash} from "../services/passwords";
 import Logger from "../../config/logger";
 import {getPool} from "../../config/db";
@@ -49,5 +49,20 @@ export async function logoutUser(token: string): Promise<[number, string]> {
         return [200, "User logged out!"];
     } else {
         return [401, "Cannot log out if you are not logged in."];
+    }
+}
+
+export async function viewUser(userId: number, token: string): Promise<[number, string, object]> {
+    const result = await runSQL(`SELECT first_name, last_name, email
+                                 FROM user
+                                 WHERE id = ${userId}`);
+    const users = result[0] as { first_name: string, last_name: string, email: string }[]
+    if (users.length === 0) {
+        return [404, "User not found", null];
+    }
+    if (userId === getUserId(token)) {
+        return [200, "", users[0]];
+    } else {
+        return [200, "User found!", {firstName: users[0].first_name, lastName: users[0].last_name}];
     }
 }
