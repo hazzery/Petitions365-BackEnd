@@ -42,19 +42,12 @@ Content-Type: application/json
 }
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 201", function () {
-
     //     pm.response.to.have.status(201);
-
     // });
-
-    // 
-
+    //
     // pm.test("Expected response", function() {
-
     //     pm.expect(pm.response.json().userId).to.be.a('number')
-
     // });
 %}
 
@@ -70,12 +63,9 @@ Content-Type: application/json
 }
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 401", function () {
     //     pm.response.to.have.status(401);
     // });
-    //
-    //
 %}
 
 ###
@@ -90,7 +80,6 @@ Content-Type: application/json
 }
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 200", function () {
     //     pm.response.to.have.status(200);
     // });
@@ -111,8 +100,6 @@ Content-Type: application/json
     //         pm.globals.set("user_id", userId);
     //     }
     // });
-    //
-    //
 %}
 
 ###
@@ -129,11 +116,8 @@ Content-Type: application/json
 }
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 403", function () {
-
     //     pm.response.to.have.status(403);
-
     // });
 %}
 
@@ -151,11 +135,8 @@ Content-Type: application/json
 }
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 400", function () {
-
     //     pm.response.to.have.status(400);
-
     // });
 %}
 
@@ -173,11 +154,8 @@ Content-Type: application/json
 }
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 400", function () {
-
     //     pm.response.to.have.status(400);
-
     // });
 %}
 
@@ -195,11 +173,8 @@ Content-Type: application/json
 }
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 400", function () {
-
     //     pm.response.to.have.status(400);
-
     // });
 %}
 
@@ -217,11 +192,8 @@ Content-Type: application/json
 }
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 400", function () {
-
     //     pm.response.to.have.status(400);
-
     // });
 %}
 
@@ -232,62 +204,39 @@ GET {{BASE_URL}}/users/NotANumber
 X-Authorization: {{auth_token}}
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 400 or 404", function () {
-
     //     pm.expect(pm.response.code).to.be.oneOf([400, 404]);
-
     // });
 %}
 
 ###
+@user_id = 24
+@auth_token = x5hnvvqbw0a
 # group: users
 # @name GET /users/:id (me)
 GET {{BASE_URL}}/users/{{user_id}}
 X-Authorization: {{auth_token}}
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // var expectedData = {
-
     //     "firstName": "Mike",
-
     //     "lastName": "Wheeler",
-
     //     "email": "mike.wheeler@hawkinsmiddle.school.us"
-
     // }
-
-    // 
-
+    //
     // pm.test("Status code is 200", function () {
-
     //     pm.response.to.have.status(200);
-
     // });
-
-    // 
-
+    //
     // pm.test("Expected data", function() {
-
     //     try {
-
     //         var data = pm.response.json()
-
     //         pm.expect(data.firstName).to.equal("Mike")
-
     //         pm.expect(data.lastName).to.equal("Wheeler")
-
     //         pm.expect(data.email).to.equal("mike.wheeler@hawkinsmiddle.school.us")
-
     //     } catch (err) {
-
     //         pm.expect.fail("INVALID RESPONSE")
-
     //     }
-
-    //     
-
     // })
 %}
 
@@ -298,41 +247,23 @@ GET {{BASE_URL}}/users/1
 X-Authorization: {{auth_token}}
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 200", function () {
-
     //     pm.response.to.have.status(200);
-
     // });
-
-    // 
-
+    //
     // pm.test("Expected data", function() {
-
     //     try {
-
     //         var data = pm.response.json()
-
     //         pm.expect(data.firstName).to.equal("Kristy")
-
     //         pm.expect(data.lastName).to.equal("Lincoln")
-
     //         if(!data.hasOwnProperty("email")){
-
     //             pm.expect(!data.hasOwnProperty("email")).to.equal(true);
-
     //         } else {
-
     //             pm.expect.fail('Email is present')
-
     //         }
-
     //     } catch(err) {
-
     //         pm.expect.fail("INVALID RESPONSE")
-
     //     }
-
     // })
 %}
 
@@ -349,11 +280,8 @@ Content-Type: application/json
 }
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 400, 403, or 404", function () {
-
     //     pm.expect(pm.response.code).to.be.oneOf([400, 403, 404]);
-
     // });
 %}
 
@@ -370,11 +298,8 @@ Content-Type: application/json
 }
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 403", function () {
-
     //     pm.response.to.have.status(403);
-
     // });
 %}
 
@@ -391,11 +316,8 @@ Content-Type: application/json
 }
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 200", function () {
-
     //     pm.response.to.have.status(200);
-
     // });
 %}
 
@@ -411,11 +333,8 @@ Content-Type: application/json
 }
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 400", function () {
-
     //     pm.response.to.have.status(400);
-
     // });
 %}
 
@@ -431,11 +350,8 @@ Content-Type: application/json
 }
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 400", function () {
-
     //     pm.response.to.have.status(400);
-
     // });
 %}
 
@@ -451,11 +367,8 @@ Content-Type: application/json
 }
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 401", function () {
-
     //     pm.response.to.have.status(401);
-
     // });
 %}
 
@@ -466,7 +379,6 @@ POST {{BASE_URL}}/users/logout
 X-Authorization: {{auth_token}}
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 200", function () {
     //     pm.response.to.have.status(200);
     //     if (responseCode.code === 200) {
@@ -483,37 +395,20 @@ GET {{BASE_URL}}/users/{{user_id}}
 X-Authorization: {{auth_token}}
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 200", function () {
-
     //     pm.response.to.have.status(200);
-
     // });
-
-    // 
-
+    //
     // pm.test("Token is not valid anymore", function() {
-
     //     try {
-
     //         const body = pm.response.json()
-
     //         pm.expect(body).to.have.property("firstName")
-
     //         pm.expect(body).to.have.property("lastName")
-
     //         pm.expect(body).to.not.have.property("email")
-
     //     } catch (err) {
-
     //         console.log(err)
-
     //         pm.expect.fail("INVALID RESPONSE")
-
     //     }
-
-    //     
-
     // })
 %}
 
@@ -529,7 +424,6 @@ Content-Type: application/json
 }
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // // pm.test("Status code is 200", function () {
     // //     pm.response.to.have.status(200);
     // // });
@@ -550,31 +444,24 @@ Content-Type: application/json
     //         pm.globals.set("user_id", userId);
     //     }
     // });
-    //
-    //
 %}
 
 ###
 # group: users
 # @name [HELPER] POST /executeSql (set user token for testing)
-//< {%
-    // TODO: migrate to HTTP Client Pre-request handler API
-    // // define the body with variables before sending
-    // let token_body =  "UPDATE `user` SET `auth_token`='token_placeholder' WHERE `id`={{user_id}};";
-    // token_body = token_body.replace('token_placeholder', pm.globals.get("auth_token"));
-    // pm.variables.set('token_body', token_body);
-    // // pm.globals.set("auth_token", "test_token");
-    // // pm.globals.set("user_id", 18);
-    //
-//%}
+< {%
+     // define the body with variables before sending
+     // let token_body =  "UPDATE `user` SET `auth_token`='token_placeholder' WHERE `id`={{user_id}};";
+     // token_body = token_body.replace('token_placeholder', pm.globals.get("auth_token"));
+     // pm.variables.set('token_body', token_body);
+     // pm.globals.set("auth_token", "test_token");
+     // pm.globals.set("user_id", 18);
+
+%}
 POST {{BASE_URL}}/executeSql
 Content-Type: text/plain
 
 {{token_body}}
-
-> {%
-    // TODO: you can add here Response handler
-%}
 
 ###
 # group: users.images
@@ -582,14 +469,9 @@ Content-Type: text/plain
 GET {{BASE_URL}}/users/{{user_id}}/image
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 404", function () {
-
     //     pm.response.to.have.status(404);
-
     // });
-
-    //
 %}
 
 ###
@@ -602,11 +484,8 @@ X-Authorization: {{auth_token}}
 < user_sample.jpg
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 201", function () {
-
     //     pm.response.to.have.status(201);
-
     // });
 %}
 
@@ -616,19 +495,12 @@ X-Authorization: {{auth_token}}
 GET {{BASE_URL}}/users/{{user_id}}/image
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 200", function () {
-
     //     pm.response.to.have.status(200);
-
     // });
-
-    // 
-
+    //
     // pm.test("Content Type is correct", function() {
-
     //     pm.response.to.be.header("Content-Type", "image/jpeg");
-
     // });
 %}
 
@@ -642,11 +514,8 @@ X-Authorization: {{auth_token}}
 < user_sample.jpg
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 403 or 404", function () {
-
     //     pm.expect(pm.response.code).to.be.oneOf([403, 404]);
-
     // });
 %}
 
@@ -656,11 +525,8 @@ X-Authorization: {{auth_token}}
 GET {{BASE_URL}}/users/99999999/image
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 404", function () {
-
     //     pm.response.to.have.status(404);
-
     // });
 %}
 
@@ -671,11 +537,8 @@ DELETE {{BASE_URL}}/users/{{user_id}}/image
 X-Authorization: {{auth_token}}
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 200", function () {
-
     //     pm.response.to.have.status(200);
-
     // });
 %}
 
@@ -686,11 +549,8 @@ DELETE {{BASE_URL}}/users/NotANumber/image
 X-Authorization: {{auth_token}}
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 400 or 404", function () {
-
     //     pm.expect(pm.response.code).to.be.oneOf([400, 404]);
-
     // });
 %}
 
@@ -701,14 +561,9 @@ DELETE {{BASE_URL}}/users/1/image
 X-Authorization: {{auth_token}}
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 403 or 404", function () {
-
     //     pm.expect(pm.response.code).to.be.oneOf([403, 404]);
-
     // });
-
-    //
 %}
 
 ###
@@ -717,141 +572,73 @@ X-Authorization: {{auth_token}}
 GET {{BASE_URL}}/petitions
 
 > {%
-    // TODO: migrate to HTTP Client Response handler API
     // pm.test("Status code is 200", function () {
-
     //     pm.response.to.have.status(200);
-
     // });
-
-    // 
-
+    //
     // pm.test("Valid count and number of petitions", function() {
-
     //     try {
-
     //         var data = pm.response.json()
-
     //         pm.expect(data.count).to.equal(18)
-
     //         pm.expect(data.petitions.length).to.equal(18)
-
     //     } catch (err) {
-
     //         pm.expect.fail("Incorrect count or number of petitions")
-
     //     }
-
     // })
-
-    // 
-
+    //
     // var expectedOrdering = [6,1,2,7,8,4,9,10,3,11,12,5,13,14,15,16,17,18]
-
-    // 
-
+    //
     // pm.test("Valid ordering", function() {
-
     //     try {
-
     //         var petitions = pm.response.json().petitions
-
     //         // console.log(`petitions [${petitions.map(p => p.petitionId)}]`)
-
     //         for (var i = 0; i<expectedOrdering.length; i++){
-
     //             if (expectedOrdering[i] !== petitions[i].petitionId){
-
     //                 pm.expect.fail("Invalid ordering of petitions")
-
     //                 break
-
     //             }
-
     //         }
-
     //     } catch (err) {
-
     //         pm.expect.fail("Invalid ordering of petitions")
-
     //     }
-
     // })
-
-    // 
 
     // pm.test("Expected petition data structure", function() {
-
     //     try{
-
     //         var data = pm.response.json().petitions[0]
-
     //         pm.expect(data.petitionId).to.be.a("number");
-
     //         pm.expect(data.title).to.be.a("string");
-
     //         pm.expect(data.categoryId).to.be.a("number");
-
     //         pm.expect(data.ownerId).to.be.a("number");
-
     //         pm.expect(data.ownerFirstName).to.be.a("string");
-
     //         pm.expect(data.ownerLastName).to.be.a("string");
-
     //     } catch(err) {
-
     //         pm.expect.fail("INVALID RESPONSE")
-
     //     }
-
     // })
-
-    // 
-
+    //
     // var expectedData = {
-
     //     "petitionId": 6,
-
     //     "title": "Avonbush Natural Park",
-
     //     "categoryId": 1,
-
     //     "ownerId": 3,
-
     //     "ownerFirstName": "Tahani",
-
     //     "ownerLastName": "Al-Jamil",
-
     //     "creationDate": "2022-12-10T22:56:12.000Z",
-
     //     "supportingCost": 0
-
     // }
-
-    // 
-
+    //
     // pm.test("Valid petition data", function() {
-
     //     try{
-
     //         var data = pm.response.json()
-
     //         var petition = data.petitions.filter(p => p.petitionId === expectedData.petitionId)[0]
-
     //         for(const [key, value] of Object.entries(expectedData)) {
-
     //             pm.expect(petition[key]).to.equal(value)
-
     //         }
-
     //     } catch (err) {
-
     //         console.log(err)
-
     //         pm.expect.fail("Incorrect petition data")
-
     //     }
-
     // })
 %}
 
