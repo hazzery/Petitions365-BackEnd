@@ -1,4 +1,4 @@
-import {UserLogin, UserRegister} from "../types/requestBodySchemaInterfaces";
+import {UserEdit, UserLogin, UserRegister} from "../types/requestBodySchemaInterfaces";
 import {createSession, deleteSession, getUserId} from "../services/sessions";
 import {compare, hash} from "../services/passwords";
 import Logger from "../../config/logger";
@@ -64,5 +64,23 @@ export async function viewUser(userId: number, token: string): Promise<[number, 
         return [200, "", users[0]];
     } else {
         return [200, "User found!", {firstName: users[0].first_name, lastName: users[0].last_name}];
+    }
+}
+
+export async function updateUser(userId: number, token: string, data: UserEdit): Promise<[number, string, object]> {
+    if (userId !== getUserId(token)) {
+        return [401, "Unauthorized", null];
+    }
+    const hashedPassword = await hash(data.password);
+    try {
+        await runSQL(`UPDATE user
+                      SET email = '${data.email}', first_name = '${data.firstName}', last_name = '${data.lastName}', password = '${hashedPassword}'
+                      WHERE id = ${userId}`);
+        return [200, "User updated!", null];
+    } catch (error) {
+        if (error.code === 'ER_DUP_ENTRY') {
+            Logger.warn(error.message);
+            return [403, "Email address already in use", null];
+        } else throw error;
     }
 }

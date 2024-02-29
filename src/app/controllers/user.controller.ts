@@ -77,15 +77,6 @@ export async function view(request: Request, response: Response): Promise<void> 
 }
 
 export async function update(request: Request, response: Response): Promise<void> {
-    try {
-        // Your code goes here
-        response.statusMessage = "Not Implemented Yet!";
-        response.status(501).send();
-        return;
-    } catch (err) {
-        Logger.error(err);
-        response.statusMessage = "Internal Server Error";
-        response.status(500).send();
-        return;
-    }
+    const editUser = (body: object) => users.updateUser(Number(request.params.id), authorisation(request), body);
+    await processRequestBody(request, response, schemas.user_edit, editUser);
 }
