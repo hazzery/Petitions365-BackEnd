@@ -1,0 +1,3255 @@
+# 2024_petitions_student
+
+###
+# group: BACKDOOR
+# @name HEARTBEAT
+GET {{BASE_URL}}/heartbeat
+
+###
+# group: BACKDOOR
+# @name POST /reset
+POST {{BASE_URL}}/reset
+
+###
+# group: BACKDOOR
+# @name POST /resample
+POST {{BASE_URL}}/resample
+
+###
+# group: BACKDOOR
+# @name POST /executeSql
+POST {{BASE_URL}}/executeSql
+Content-Type: text/plain
+
+SELECT * FROM user;
+
+###
+# group: BACKDOOR
+# @name POST /reload
+POST {{BASE_URL}}/reload
+
+###
+# group: users
+# @name POST /users/register
+POST {{BASE_URL}}/users/register
+Content-Type: application/json
+
+{
+  "firstName": "Mike",
+  "lastName": "Wheeler",
+  "email": "mike.wheeler@hawkinsmiddle.school.us",
+  "password": "password"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 201", function () {
+
+    //     pm.response.to.have.status(201);
+
+    // });
+
+    // 
+
+    // pm.test("Expected response", function() {
+
+    //     pm.expect(pm.response.json().userId).to.be.a('number')
+
+    // });
+%}
+
+###
+# group: users
+# @name POST /users/login (incorrect password)
+POST {{BASE_URL}}/users/login
+Content-Type: application/json
+
+{
+  "email": "mike.wheeler@hawkinsmiddle.school.us",
+  "password": "notthepassword"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 401", function () {
+    //     pm.response.to.have.status(401);
+    // });
+    //
+    //
+%}
+
+###
+# group: users
+# @name POST /users/login
+POST {{BASE_URL}}/users/login
+Content-Type: application/json
+
+{
+  "email": "mike.wheeler@hawkinsmiddle.school.us",
+  "password": "password"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+    //     pm.response.to.have.status(200);
+    // });
+    //
+    // pm.test("Expected response", function() {
+    //     pm.expect(pm.response.json().token).to.be.a('string')
+    //     pm.expect(pm.response.json().userId).to.be.a('number')
+    // });
+    //
+    // pm.test("Set auth_token and user_id after login", function() {
+    //     const authToken = pm.response.json().token;
+    //     if (typeof authToken !== "undefined") {
+    //         pm.globals.set("auth_token", authToken);
+    //         pm.globals.set("test_token", authToken);
+    //     }
+    //     const userId = pm.response.json().userId;
+    //     if (typeof userId !== "undefined") {
+    //         pm.globals.set("user_id", userId);
+    //     }
+    // });
+    //
+    //
+%}
+
+###
+# group: users
+# @name POST /users/register (invalid email, already in use)
+POST {{BASE_URL}}/users/register
+Content-Type: application/json
+
+{
+  "firstName": "Lucas",
+  "lastName": "Sinclair",
+  "email": "k@gmail.com",
+  "password": "ranger"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 403", function () {
+
+    //     pm.response.to.have.status(403);
+
+    // });
+%}
+
+###
+# group: users
+# @name POST /users/register (empty last name)
+POST {{BASE_URL}}/users/register
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "",
+  "email": "johnj@gmail.com",
+  "password": "ranger"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+%}
+
+###
+# group: users
+# @name POST /users/register (invalid email)
+POST {{BASE_URL}}/users/register
+Content-Type: application/json
+
+{
+  "firstName": "Lucas",
+  "lastName": "Sinclair",
+  "email": "lucassinclair.gmail.com",
+  "password": "ranger"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+%}
+
+###
+# group: users
+# @name POST /users/register (long email)
+POST {{BASE_URL}}/users/register
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Johnson",
+  "email": "jXeWxtnx9IBKwrL8vJCX8BjoIFaX0HP3pJGvFHsDRGg2QwKVSbVwg3NPwiwr0onEXIlz3oxaSvSsB2cgsnF7vzNSBaOtRe0YK5S6GI9SM7FFqQjYN5K9UZyeAlKT1hllaN5R0hymnKodY8v38jRdxhCU9NWcsTxViccsClLw18EJzX7q77f4yRMA5jOtWeCUHa7fs8UZWMb1XgyvCeo8e1JNmh73exNBMTB6KDx3NmaWqMYyZCr0q4w3ap1jdC1fz@example.com",
+  "password": "ranger"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+%}
+
+###
+# group: users
+# @name POST /users/register (short password)
+POST {{BASE_URL}}/users/register
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Johnson",
+  "email": "johnj@gmail.com",
+  "password": "12345"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+%}
+
+###
+# group: users
+# @name GET /users/:id (NaN)
+GET {{BASE_URL}}/users/NotANumber
+X-Authorization: {{auth_token}}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400 or 404", function () {
+
+    //     pm.expect(pm.response.code).to.be.oneOf([400, 404]);
+
+    // });
+%}
+
+###
+# group: users
+# @name GET /users/:id (me)
+GET {{BASE_URL}}/users/{{user_id}}
+X-Authorization: {{auth_token}}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // var expectedData = {
+
+    //     "firstName": "Mike",
+
+    //     "lastName": "Wheeler",
+
+    //     "email": "mike.wheeler@hawkinsmiddle.school.us"
+
+    // }
+
+    // 
+
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("Expected data", function() {
+
+    //     try {
+
+    //         var data = pm.response.json()
+
+    //         pm.expect(data.firstName).to.equal("Mike")
+
+    //         pm.expect(data.lastName).to.equal("Wheeler")
+
+    //         pm.expect(data.email).to.equal("mike.wheeler@hawkinsmiddle.school.us")
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("INVALID RESPONSE")
+
+    //     }
+
+    //     
+
+    // })
+%}
+
+###
+# group: users
+# @name GET /users/:id (another user)
+GET {{BASE_URL}}/users/1
+X-Authorization: {{auth_token}}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("Expected data", function() {
+
+    //     try {
+
+    //         var data = pm.response.json()
+
+    //         pm.expect(data.firstName).to.equal("Kristy")
+
+    //         pm.expect(data.lastName).to.equal("Lincoln")
+
+    //         if(!data.hasOwnProperty("email")){
+
+    //             pm.expect(!data.hasOwnProperty("email")).to.equal(true);
+
+    //         } else {
+
+    //             pm.expect.fail('Email is present')
+
+    //         }
+
+    //     } catch(err) {
+
+    //         pm.expect.fail("INVALID RESPONSE")
+
+    //     }
+
+    // })
+%}
+
+###
+# group: users
+# @name PATCH /users/:id (NaN
+PATCH {{BASE_URL}}/users/NotANumber
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "password": "new secure password",
+  "currentPassword": "paladin"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400, 403, or 404", function () {
+
+    //     pm.expect(pm.response.code).to.be.oneOf([400, 403, 404]);
+
+    // });
+%}
+
+###
+# group: users
+# @name PATCH /users/:id (me) (identical currentPassword and password)
+PATCH {{BASE_URL}}/users/{{user_id}}
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "password": "password",
+  "currentPassword": "password"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 403", function () {
+
+    //     pm.response.to.have.status(403);
+
+    // });
+%}
+
+###
+# group: users
+# @name PATCH /users/:id (me)
+PATCH {{BASE_URL}}/users/{{user_id}}
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "password": "new secure password",
+  "currentPassword": "password"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+%}
+
+###
+# group: users
+# @name PATCH /users/:id (me) (empty lastName)
+PATCH {{BASE_URL}}/users/{{user_id}}
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "lastName": ""
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+%}
+
+###
+# group: users
+# @name PATCH /users/:id (me) (invalid email no top level comain)
+PATCH {{BASE_URL}}/users/{{user_id}}
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "email": "notan@email"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+%}
+
+###
+# group: users
+# @name PATCH /users/:id (Unauthorized)
+PATCH {{BASE_URL}}/users/{{user_id}}
+Content-Type: application/json
+
+{
+  "password": "new secure password",
+  "currentPassword": "paladin"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 401", function () {
+
+    //     pm.response.to.have.status(401);
+
+    // });
+%}
+
+###
+# group: users
+# @name POST /users/logout
+POST {{BASE_URL}}/users/logout
+X-Authorization: {{auth_token}}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+    //     pm.response.to.have.status(200);
+    //     if (responseCode.code === 200) {
+    //         // pm.globals.set("auth_token", null);
+    //         // pm.globals.set("user_id", null);
+    //     }
+    // });
+%}
+
+###
+# group: users
+# @name [VALIDATE] GET /users/:id (me)
+GET {{BASE_URL}}/users/{{user_id}}
+X-Authorization: {{auth_token}}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("Token is not valid anymore", function() {
+
+    //     try {
+
+    //         const body = pm.response.json()
+
+    //         pm.expect(body).to.have.property("firstName")
+
+    //         pm.expect(body).to.have.property("lastName")
+
+    //         pm.expect(body).to.not.have.property("email")
+
+    //     } catch (err) {
+
+    //         console.log(err)
+
+    //         pm.expect.fail("INVALID RESPONSE")
+
+    //     }
+
+    //     
+
+    // })
+%}
+
+###
+# group: users
+# @name POST /users/login (new password)
+POST {{BASE_URL}}/users/login
+Content-Type: application/json
+
+{
+  "email": "mike.wheeler@hawkinsmiddle.school.us",
+  "password": "new secure password"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // // pm.test("Status code is 200", function () {
+    // //     pm.response.to.have.status(200);
+    // // });
+    //
+    // // pm.test("Expected response", function() {
+    // //     pm.expect(pm.response.json().token).to.be.a('string')
+    // //     pm.expect(pm.response.json().userId).to.be.a('number')
+    // // });
+    //
+    // pm.test("Set auth_token and user_id after login", function() {
+    //     const authToken = pm.response.json().token;
+    //     if (typeof authToken !== "undefined") {
+    //         pm.globals.set("auth_token", authToken);
+    //         pm.globals.set("test_token", authToken);
+    //     }
+    //     const userId = pm.response.json().userId;
+    //     if (typeof userId !== "undefined") {
+    //         pm.globals.set("user_id", userId);
+    //     }
+    // });
+    //
+    //
+%}
+
+###
+# group: users
+# @name [HELPER] POST /executeSql (set user token for testing)
+//< {%
+    // TODO: migrate to HTTP Client Pre-request handler API
+    // // define the body with variables before sending
+    // let token_body =  "UPDATE `user` SET `auth_token`='token_placeholder' WHERE `id`={{user_id}};";
+    // token_body = token_body.replace('token_placeholder', pm.globals.get("auth_token"));
+    // pm.variables.set('token_body', token_body);
+    // // pm.globals.set("auth_token", "test_token");
+    // // pm.globals.set("user_id", 18);
+    //
+//%}
+POST {{BASE_URL}}/executeSql
+Content-Type: text/plain
+
+{{token_body}}
+
+> {%
+    // TODO: you can add here Response handler
+%}
+
+###
+# group: users.images
+# @name GET /users/:id/image (me; no image yet)
+GET {{BASE_URL}}/users/{{user_id}}/image
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 404", function () {
+
+    //     pm.response.to.have.status(404);
+
+    // });
+
+    //
+%}
+
+###
+# group: users.images
+# @name PUT /users/:id/image (me)
+PUT {{BASE_URL}}/users/{{user_id}}/image
+Content-Type: image/jpeg
+X-Authorization: {{auth_token}}
+
+< user_sample.jpg
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 201", function () {
+
+    //     pm.response.to.have.status(201);
+
+    // });
+%}
+
+###
+# group: users.images
+# @name GET /users/:id/image (me)
+GET {{BASE_URL}}/users/{{user_id}}/image
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("Content Type is correct", function() {
+
+    //     pm.response.to.be.header("Content-Type", "image/jpeg");
+
+    // });
+%}
+
+###
+# group: users.images
+# @name PUT /users/:id/image (doesnt exist)
+PUT {{BASE_URL}}/users/999999999/image
+Content-Type: image/jpeg
+X-Authorization: {{auth_token}}
+
+< user_sample.jpg
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 403 or 404", function () {
+
+    //     pm.expect(pm.response.code).to.be.oneOf([403, 404]);
+
+    // });
+%}
+
+###
+# group: users.images
+# @name GET /users/:id/image (doesnt exist)
+GET {{BASE_URL}}/users/99999999/image
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 404", function () {
+
+    //     pm.response.to.have.status(404);
+
+    // });
+%}
+
+###
+# group: users.images
+# @name DELETE /users/:id/image (me)
+DELETE {{BASE_URL}}/users/{{user_id}}/image
+X-Authorization: {{auth_token}}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+%}
+
+###
+# group: users.images
+# @name DELETE /users/:id/image (me) - No Image
+DELETE {{BASE_URL}}/users/NotANumber/image
+X-Authorization: {{auth_token}}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400 or 404", function () {
+
+    //     pm.expect(pm.response.code).to.be.oneOf([400, 404]);
+
+    // });
+%}
+
+###
+# group: users.images
+# @name DELETE /users/:id/image (another user)
+DELETE {{BASE_URL}}/users/1/image
+X-Authorization: {{auth_token}}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 403 or 404", function () {
+
+    //     pm.expect(pm.response.code).to.be.oneOf([403, 404]);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions
+# @name GET /petitions (no parameters)
+GET {{BASE_URL}}/petitions
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("Valid count and number of petitions", function() {
+
+    //     try {
+
+    //         var data = pm.response.json()
+
+    //         pm.expect(data.count).to.equal(18)
+
+    //         pm.expect(data.petitions.length).to.equal(18)
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("Incorrect count or number of petitions")
+
+    //     }
+
+    // })
+
+    // 
+
+    // var expectedOrdering = [6,1,2,7,8,4,9,10,3,11,12,5,13,14,15,16,17,18]
+
+    // 
+
+    // pm.test("Valid ordering", function() {
+
+    //     try {
+
+    //         var petitions = pm.response.json().petitions
+
+    //         // console.log(`petitions [${petitions.map(p => p.petitionId)}]`)
+
+    //         for (var i = 0; i<expectedOrdering.length; i++){
+
+    //             if (expectedOrdering[i] !== petitions[i].petitionId){
+
+    //                 pm.expect.fail("Invalid ordering of petitions")
+
+    //                 break
+
+    //             }
+
+    //         }
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("Invalid ordering of petitions")
+
+    //     }
+
+    // })
+
+    // 
+
+    // pm.test("Expected petition data structure", function() {
+
+    //     try{
+
+    //         var data = pm.response.json().petitions[0]
+
+    //         pm.expect(data.petitionId).to.be.a("number");
+
+    //         pm.expect(data.title).to.be.a("string");
+
+    //         pm.expect(data.categoryId).to.be.a("number");
+
+    //         pm.expect(data.ownerId).to.be.a("number");
+
+    //         pm.expect(data.ownerFirstName).to.be.a("string");
+
+    //         pm.expect(data.ownerLastName).to.be.a("string");
+
+    //     } catch(err) {
+
+    //         pm.expect.fail("INVALID RESPONSE")
+
+    //     }
+
+    // })
+
+    // 
+
+    // var expectedData = {
+
+    //     "petitionId": 6,
+
+    //     "title": "Avonbush Natural Park",
+
+    //     "categoryId": 1,
+
+    //     "ownerId": 3,
+
+    //     "ownerFirstName": "Tahani",
+
+    //     "ownerLastName": "Al-Jamil",
+
+    //     "creationDate": "2022-12-10T22:56:12.000Z",
+
+    //     "supportingCost": 0
+
+    // }
+
+    // 
+
+    // pm.test("Valid petition data", function() {
+
+    //     try{
+
+    //         var data = pm.response.json()
+
+    //         var petition = data.petitions.filter(p => p.petitionId === expectedData.petitionId)[0]
+
+    //         for(const [key, value] of Object.entries(expectedData)) {
+
+    //             pm.expect(petition[key]).to.equal(value)
+
+    //         }
+
+    //     } catch (err) {
+
+    //         console.log(err)
+
+    //         pm.expect.fail("Incorrect petition data")
+
+    //     }
+
+    // })
+%}
+
+###
+# group: petitions
+# @name GET /petitions (startIndex and count)
+GET {{BASE_URL}}/petitions?
+    startIndex=1&
+    count=1
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("Valid count and number of petitions", function() {
+
+    //     try {
+
+    //         var data = pm.response.json()
+
+    //         pm.expect(data.count).to.equal(18)
+
+    //         pm.expect(data.petitions.length).to.equal(1)
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("Incorrect count or number of petitions")
+
+    //     }
+
+    // })
+
+    // 
+
+    // pm.test("Expected petition data structure", function() {
+
+    //     try{
+
+    //         var data = pm.response.json().petitions[0]
+
+    //         pm.expect(data.petitionId).to.be.a("number");
+
+    //         pm.expect(data.title).to.be.a("string");
+
+    //         pm.expect(data.categoryId).to.be.a("number");
+
+    //         pm.expect(data.ownerId).to.be.a("number");
+
+    //         pm.expect(data.ownerFirstName).to.be.a("string");
+
+    //         pm.expect(data.ownerLastName).to.be.a("string");
+
+    //     } catch(err) {
+
+    //         pm.expect.fail("INVALID RESPONSE")
+
+    //     }
+
+    // })
+%}
+
+###
+# group: petitions
+# @name GET /petitions (q)
+GET {{BASE_URL}}/petitions?
+    q=help
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("Valid count and number of petitions", function() {
+
+    //     try {
+
+    //         var data = pm.response.json()
+
+    //         pm.expect(data.count).to.equal(4)
+
+    //         pm.expect(data.petitions.length).to.equal(4)
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("Incorrect count or number of petitions")
+
+    //     }
+
+    // })
+
+    // 
+
+    // var expectedOrdering = [1,7,5,17]
+
+    // 
+
+    // pm.test("Valid ordering", function() {
+
+    //     try {
+
+    //         var petitions = pm.response.json().petitions
+
+    //         // console.log(`petitions [${petitions.map(p => p.petitionId)}]`)
+
+    //         for (var i = 0; i<expectedOrdering.length; i++){
+
+    //             if (expectedOrdering[i] !== petitions[i].petitionId){
+
+    //                 pm.expect.fail("Invalid ordering of petitions")
+
+    //                 break
+
+    //             }
+
+    //         }
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("Invalid ordering of petitions")
+
+    //     }
+
+    // })
+
+    // 
+
+    // pm.test("Expected petition data structure", function() {
+
+    //     try{
+
+    //         var data = pm.response.json().petitions[0]
+
+    //         pm.expect(data.petitionId).to.be.a("number");
+
+    //         pm.expect(data.title).to.be.a("string");
+
+    //         pm.expect(data.categoryId).to.be.a("number");
+
+    //         pm.expect(data.ownerId).to.be.a("number");
+
+    //         pm.expect(data.ownerFirstName).to.be.a("string");
+
+    //         pm.expect(data.ownerLastName).to.be.a("string");
+
+    //     } catch(err) {
+
+    //         pm.expect.fail("INVALID RESPONSE")
+
+    //     }
+
+    // })
+
+    //
+%}
+
+###
+# group: petitions
+# @name GET /petitions (supportingCost 10)
+GET {{BASE_URL}}/petitions?
+    supportingCost=10
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("Valid count and number of petitions", function() {
+
+    //     try {
+
+    //         var data = pm.response.json()
+
+    //         pm.expect(data.count).to.equal(12)
+
+    //         pm.expect(data.petitions.length).to.equal(12)
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("Incorrect count or number of petitions")
+
+    //     }
+
+    // })
+
+    // 
+
+    // var expectedOrdering = [6,1,7,4,9,3,12,5,15,16,17,18]
+
+    // 
+
+    // pm.test("Valid ordering", function() {
+
+    //     try {
+
+    //         var petitions = pm.response.json().petitions
+
+    //         console.log(`petitions [${petitions.map(p => p.petitionId)}]`)
+
+    //         for (var i = 0; i<expectedOrdering.length; i++){
+
+    //             if (expectedOrdering[i] !== petitions[i].petitionId){
+
+    //                 pm.expect.fail("Invalid ordering of petitions")
+
+    //                 break
+
+    //             }
+
+    //         }
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("Invalid ordering of petitions")
+
+    //     }
+
+    // })
+
+    // 
+
+    // pm.test("Expected petition data structure", function() {
+
+    //     try{
+
+    //         var data = pm.response.json().petitions[0]
+
+    //         pm.expect(data.petitionId).to.be.a("number");
+
+    //         pm.expect(data.title).to.be.a("string");
+
+    //         pm.expect(data.categoryId).to.be.a("number");
+
+    //         pm.expect(data.ownerId).to.be.a("number");
+
+    //         pm.expect(data.ownerFirstName).to.be.a("string");
+
+    //         pm.expect(data.ownerLastName).to.be.a("string");
+
+    //     } catch(err) {
+
+    //         pm.expect.fail("INVALID RESPONSE")
+
+    //     }
+
+    // })
+
+    //
+%}
+
+###
+# group: petitions
+# @name GET /petitions (supporterId)
+GET {{BASE_URL}}/petitions?
+    supporterId=1
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("Valid count and number of petitions", function() {
+
+    //     try {
+
+    //         var data = pm.response.json()
+
+    //         pm.expect(data.count).to.equal(4)
+
+    //         pm.expect(data.petitions.length).to.equal(4)
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("Incorrect count or number of petitions")
+
+    //     }
+
+    // })
+
+    // 
+
+    // var expectedOrdering = [4,10,5,17]
+
+    // 
+
+    // pm.test("Valid ordering", function() {
+
+    //     try {
+
+    //         var petitions = pm.response.json().petitions
+
+    //         // console.log(`petitions [${petitions.map(p => p.petitionId)}]`)
+
+    //         for (var i = 0; i<expectedOrdering.length; i++){
+
+    //             if (expectedOrdering[i] !== petitions[i].petitionId){
+
+    //                 pm.expect.fail("Invalid ordering of petitions")
+
+    //                 break
+
+    //             }
+
+    //         }
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("Invalid ordering of petitions")
+
+    //     }
+
+    // })
+
+    // 
+
+    // pm.test("Expected petition data structure", function() {
+
+    //     try{
+
+    //         var data = pm.response.json().petitions[0]
+
+    //         pm.expect(data.petitionId).to.be.a("number");
+
+    //         pm.expect(data.title).to.be.a("string");
+
+    //         pm.expect(data.categoryId).to.be.a("number");
+
+    //         pm.expect(data.ownerId).to.be.a("number");
+
+    //         pm.expect(data.ownerFirstName).to.be.a("string");
+
+    //         pm.expect(data.ownerLastName).to.be.a("string");
+
+    //     } catch(err) {
+
+    //         pm.expect.fail("INVALID RESPONSE")
+
+    //     }
+
+    // })
+
+    //
+%}
+
+###
+# group: petitions
+# @name GET /petitions (multiple categoryIds)
+GET {{BASE_URL}}/petitions?
+    categoryIds=2
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("Valid count and number of petitions", function() {
+
+    //     try {
+
+    //         var data = pm.response.json()
+
+    //         pm.expect(data.count).to.equal(4)
+
+    //         pm.expect(data.petitions.length).to.equal(4)
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("Incorrect count or number of films")
+
+    //     }
+
+    // })
+
+    // 
+
+    // pm.test("Expected petition data structure", function() {
+
+    //     try{
+
+    //         var data = pm.response.json().petitions[0]
+
+    //         pm.expect(data.petitionId).to.be.a("number");
+
+    //         pm.expect(data.title).to.be.a("string");
+
+    //         pm.expect(data.categoryId).to.be.a("number");
+
+    //         pm.expect(data.ownerId).to.be.a("number");
+
+    //         pm.expect(data.ownerFirstName).to.be.a("string");
+
+    //         pm.expect(data.ownerLastName).to.be.a("string");
+
+    //     } catch(err) {
+
+    //         pm.expect.fail("INVALID RESPONSE")
+
+    //     }
+
+    // })
+
+    // 
+
+    // var expectedOrdering = [6,2,3,11]
+
+    // 
+
+    // pm.test("Valid ordering", function() {
+
+    //     try {
+
+    //         var petitions = pm.response.json().petitions
+
+    //         // console.log(`petitions [${petitions.map(p => p.petitionId)}]`)
+
+    //         for (var i = 0; i<expectedOrdering.length; i++){
+
+    //             if (expectedOrdering[i] !== petitions[i].petitionId){
+
+    //                 pm.expect.fail("Invalid ordering of petitions")
+
+    //                 break
+
+    //             }
+
+    //         }
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("Invalid ordering of petitions")
+
+    //     }
+
+    // })
+%}
+
+###
+# group: petitions
+# @name GET /petitions (many params - ownerId)
+GET {{BASE_URL}}/petitions?
+    ownerId=16&
+    q=at&
+    supportingCost=10&
+    categoryIds=8&
+    startIndex=0&
+    count=1
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("Valid count and number of petitions", function() {
+
+    //     try {
+
+    //         var data = pm.response.json()
+
+    //         pm.expect(data.count).to.equal(2)
+
+    //         pm.expect(data.petitions.length).to.equal(1)
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("Incorrect count or number of petitions")
+
+    //     }
+
+    // })
+
+    // 
+
+    // var expectedOrdering = [12]
+
+    // 
+
+    // pm.test("Valid ordering", function() {
+
+    //     try {
+
+    //         var petitions = pm.response.json().petitions
+
+    //         // console.log(`petitions [${petitions.map(p => p.petitionId)}]`)
+
+    //         for (var i = 0; i<expectedOrdering.length; i++){
+
+    //             if (expectedOrdering[i] !== petitions[i].petitionId){
+
+    //                 pm.expect.fail("Invalid ordering of petitions")
+
+    //                 break
+
+    //             }
+
+    //         }
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("Invalid ordering of petitions")
+
+    //     }
+
+    // })
+
+    // 
+
+    // pm.test("Expected petition data structure", function() {
+
+    //     try{
+
+    //         var data = pm.response.json().petitions[0]
+
+    //         pm.expect(data.petitionId).to.be.a("number");
+
+    //         pm.expect(data.title).to.be.a("string");
+
+    //         pm.expect(data.categoryId).to.be.a("number");
+
+    //         pm.expect(data.ownerId).to.be.a("number");
+
+    //         pm.expect(data.ownerFirstName).to.be.a("string");
+
+    //         pm.expect(data.ownerLastName).to.be.a("string");
+
+    //     } catch(err) {
+
+    //         pm.expect.fail("INVALID RESPONSE")
+
+    //     }
+
+    // })
+
+    //
+%}
+
+###
+# group: petitions
+# @name GET /petitions (sortBy COST_DESC)
+GET {{BASE_URL}}/petitions?
+    sortBy=COST_DESC
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("Valid count and number of petitions", function() {
+
+    //     try {
+
+    //         var data = pm.response.json()
+
+    //         pm.expect(data.count).to.equal(18)
+
+    //         pm.expect(data.petitions.length).to.equal(18)
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("Incorrect count or number of films")
+
+    //     }
+
+    // })
+
+    // 
+
+    // var expectedOrdering = [8,14,10,13,2,11,9,12,4,5,7,1,3,6,15,16,17,18]
+
+    // 
+
+    // pm.test("Valid ordering", function() {
+
+    //     try {
+
+    //         var petitions = pm.response.json().petitions
+
+    //         // console.log(`petitions [${petitions.map(p => p.petitionId)}]`)
+
+    //         for (var i = 0; i<expectedOrdering.length; i++){
+
+    //             if (expectedOrdering[i] !== petitions[i].petitionId){
+
+    //                 pm.expect.fail("Invalid ordering of petitions")
+
+    //                 break
+
+    //             }
+
+    //         }
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("Invalid ordering of petitions")
+
+    //     }
+
+    // })
+
+    // 
+
+    // pm.test("Expected petition data structure", function() {
+
+    //     try{
+
+    //         var data = pm.response.json().petitions[0]
+
+    //         pm.expect(data.petitionId).to.be.a("number");
+
+    //         pm.expect(data.title).to.be.a("string");
+
+    //         pm.expect(data.categoryId).to.be.a("number");
+
+    //         pm.expect(data.ownerId).to.be.a("number");
+
+    //         pm.expect(data.ownerFirstName).to.be.a("string");
+
+    //         pm.expect(data.ownerLastName).to.be.a("string");
+
+    //     } catch(err) {
+
+    //         pm.expect.fail("INVALID RESPONSE")
+
+    //     }
+
+    // })
+%}
+
+###
+# group: petitions
+# @name GET /petitions (empty q)
+GET {{BASE_URL}}/petitions?
+    q=
+
+    > {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions
+# @name GET /petitions (invalid sortBy)
+GET {{BASE_URL}}/petitions?
+    sortBy=not_a_sort_option
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions
+# @name GET /petitions (invalid supporterId)
+GET {{BASE_URL}}/petitions?
+    supporterId=abc
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+%}
+
+###
+# group: petitions
+# @name GET /petitions/id
+GET {{BASE_URL}}/petitions/1
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // // todo: check return value
+%}
+
+###
+# group: petitions
+# @name GET /petitions/id (Not Found)
+GET {{BASE_URL}}/petitions/9999
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 404", function () {
+
+    //     pm.response.to.have.status(404);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions
+# @name GET /petitions/categories
+GET {{BASE_URL}}/petitions/categories
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("returns an array of the correct size", function () {
+
+    //     pm.expect(pm.response.json()).to.be.an("array");
+
+    //     pm.expect(pm.response.json().length).to.equal(12);
+
+    // })
+
+    // 
+
+    // // todo: validate response data
+%}
+
+###
+# group: petitions
+# @name POST /petition (empty title)
+POST {{BASE_URL}}/petitions
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "",
+  "description": "My new petition description",
+  "categoryId": 1,
+  "supportTiers": [
+    {
+      "title": "Free tier",
+      "description": "Its free",
+      "cost": 0
+    }
+  ]
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions
+# @name POST /petition (No supportTiers)
+POST {{BASE_URL}}/petitions
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "My new petition",
+  "description": "My new petition description",
+  "categoryId": 1
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions
+# @name POST /petition (invalid supportTiers - too many tiers)
+POST {{BASE_URL}}/petitions
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "My new petition",
+  "description": "My new petition description",
+  "categoryId": 1,
+  "supportTiers": [
+    {
+      "title": "tier 1",
+      "description": "first tier",
+      "cost": 0
+    },
+    {
+      "title": "tier 2",
+      "description": "second tier",
+      "cost": 10
+    },
+    {
+      "title": "tier 3",
+      "description": "third tier",
+      "cost": 20
+    },
+    {
+      "title": "tier 4",
+      "description": "fourth tier",
+      "cost": 30
+    }
+  ]
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions
+# @name POST /petition (invalid supportTiers - no cost)
+POST {{BASE_URL}}/petitions
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "My new petition",
+  "description": "My new petition description",
+  "categoryId": 1,
+  "supportTiers": [
+    {
+      "title": "Free tier",
+      "description": "Its free"
+    }
+  ]
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions
+# @name POST /petition (Not authorized)
+POST {{BASE_URL}}/petitions
+Content-Type: application/json
+
+{
+  "title": "My new petition",
+  "description": "My new petition description",
+  "categoryId": 1,
+  "supportTiers": [
+    {
+      "title": "Free tier",
+      "description": "Its free",
+      "cost": 0
+    }
+  ]
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 401", function () {
+
+    //     pm.response.to.have.status(401);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions
+# @name POST /petition
+POST {{BASE_URL}}/petitions
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "My new petition",
+  "description": "My new petition description",
+  "categoryId": 1,
+  "supportTiers": [
+    {
+      "title": "Free tier",
+      "description": "Its free",
+      "cost": 0
+    }
+  ]
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 201", function () {
+
+    //     pm.response.to.have.status(201);
+
+    // });
+
+    // 
+
+    // pm.test("petitionId is returned", function () {
+
+    //     pm.expect(pm.response.json().petitionId).to.be.a("number")
+
+    // })
+
+    // 
+
+    // pm.test("Set post_petition_id after creation", function() {
+
+    //     const petitionId = pm.response.json().petitionId;
+
+    //     if (typeof petitionId !== "undefined") {
+
+    //         pm.globals.set("post_petition_id", petitionId);
+
+    //     }
+
+    // });
+%}
+
+###
+# group: petitions
+# @name POST /petition (many supportTiers)
+POST {{BASE_URL}}/petitions
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "My newer petition",
+  "description": "My newer petition description",
+  "categoryId": 1,
+  "supportTiers": [
+    {
+      "title": "Free tier",
+      "description": "Its free",
+      "cost": 0
+    },
+    {
+      "title": "Low tier",
+      "description": "Its not free",
+      "cost": 15
+    },
+    {
+      "title": "High tier",
+      "description": "Its really not free",
+      "cost": 250
+    }
+  ]
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 201", function () {
+
+    //     pm.response.to.have.status(201);
+
+    // });
+
+    // 
+
+    // pm.test("petitionId is returned", function () {
+
+    //     pm.expect(pm.response.json().petitionId).to.be.a("number")
+
+    // })
+%}
+
+###
+# group: petitions
+# @name PATCH /petition (Forbidden - someone else's)
+PATCH {{BASE_URL}}/petitions/1
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "My updated petition",
+  "description": "My updated petition description",
+  "categoryId": 2
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 404 or 403", function () {
+
+    //     pm.expect(pm.response.code).to.be.oneOf([404, 403]);
+
+    // });
+%}
+
+###
+# group: petitions
+# @name PATCH /petition (title too long)
+PATCH {{BASE_URL}}/petitions/{{post_petition_id}}
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "i3EC3LhN2TbzaLxLRjedaC9rb4V7cR5rGtuDgVpMStvvRPvFGrENQXkndgX22JbfrkVaq5Mv2TGKPLyLbWKywbrBJ1hGVMSbrR21DFATkzcea6zLkapcyhuL4vK9fwF0N"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions
+# @name PATCH /petition (empty description)
+PATCH {{BASE_URL}}/petitions/{{post_petition_id}}
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "description": ""
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions
+# @name PATCH /petition (invalid categoryId - string)
+PATCH {{BASE_URL}}/petitions/{{post_petition_id}}
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "categoryId": "1"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions
+# @name PATCH /petition (NaN)
+PATCH {{BASE_URL}}/petitions/not_an_id
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "My updated petition",
+  "description": "My updated petition description",
+  "categoryId": 3
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400 or 404", function () {
+
+    //     pm.expect(pm.response.code).to.be.oneOf([400, 404]);
+
+    // });
+%}
+
+###
+# group: petitions
+# @name PATCH /petition (title only)
+PATCH {{BASE_URL}}/petitions/{{post_petition_id}}
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "title"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions
+# @name [VALIDATE] GET /petition/id (validate patch)
+GET {{BASE_URL}}/petitions/{{post_petition_id}}
+X-Authorization: {{auth_token}}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("expected values have been set", function() {
+
+    //     try {
+
+    //         pm.expect(pm.response.json().petitionId).to.equal(pm.globals.get("post_petition_id"));
+
+    //         pm.expect(pm.response.json().title).to.equal("title");
+
+    //     } catch (err) {
+
+    //         console.log(err);
+
+    //         pm.expect.fail("INVALID RESPONSE");
+
+    //     }
+
+    // });
+%}
+
+###
+# group: petitions
+# @name PATCH /petition (all)
+PATCH {{BASE_URL}}/petitions/{{post_petition_id}}
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "My updated petition",
+  "description": "My updated petition description",
+  "categoryId": 3
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions
+# @name [VALIDATE] GET /petition/id (validate patch)
+GET {{BASE_URL}}/petitions/{{post_petition_id}}
+X-Authorization: {{auth_token}}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("expected values have been set", function() {
+
+    //     try {
+
+    //         pm.expect(pm.response.json().petitionId).to.equal(pm.globals.get("post_petition_id"));
+
+    //         pm.expect(pm.response.json().title).to.equal("My updated petition");
+
+    //         pm.expect(pm.response.json().description).to.equal("My updated petition description");
+
+    //         pm.expect(pm.response.json().categoryId).to.equal(3);
+
+    //     } catch (err) {
+
+    //         console.log(err);
+
+    //         pm.expect.fail("INVALID RESPONSE");
+
+    //     }
+
+    // });
+%}
+
+###
+# group: petitions
+# @name DELETE /petition (Not Found)
+DELETE {{BASE_URL}}/petitions/9999
+X-Authorization: {{auth_token}}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 404 or 403", function () {
+
+    //     pm.expect(pm.response.code).to.be.oneOf([404, 403]);
+
+    // });
+%}
+
+###
+# group: petitions
+# @name [HELPER] Add petition with supporter
+//< {%
+    // TODO: you can add here Pre-request handler
+//%}
+POST {{BASE_URL}}/executeSql
+X-Authorization: {{auth_token}}
+Content-Type: text/plain
+
+INSERT INTO `petition` (`id`, `title`, `description`, `creation_date`, `image_filename`, `owner_id`, `category_id`) VALUES (12345, 'example petition', 'example description', '2023-10-18 10:10:00', 'petition_3.jpg', {{user_id}}, 2);
+INSERT INTO `support_tier` (`id`, `petition_id`, `title`, `description`, `cost`) VALUES (12345, 12345, 'Join the newsletter', 'Sign-up to receive the monthly newsletter', 0);
+INSERT INTO `supporter` (`petition_id`, `support_tier_id`, `user_id`, `message`, `timestamp`) VALUES (12345, 12345, 1, 'Interesting stuff', '2023-11-07 06:59:58');
+
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200 (created) or 500 (already exists?)", function () {
+
+    //     pm.expect(pm.response.code).to.be.oneOf([200, 500]);
+
+    // });
+%}
+
+###
+# group: petitions
+# @name DELETE /petition (Forbidden - supporter exists)
+DELETE {{BASE_URL}}/petitions/12345
+X-Authorization: {{auth_token}}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 403", function () {
+
+    //     pm.response.to.have.status(403);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions
+# @name DELETE /petition
+DELETE {{BASE_URL}}/petitions/{{post_petition_id}}
+X-Authorization: {{auth_token}}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supportTiers
+# @name [HELPER] POST /petition
+POST {{BASE_URL}}/petitions
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "My newest petition",
+  "description": "My new petition description",
+  "categoryId": 1,
+  "supportTiers": [
+    {
+      "title": "Free tier",
+      "description": "Its free",
+      "cost": 0
+    }
+  ]
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 201", function () {
+
+    //     pm.response.to.have.status(201);
+
+    // });
+
+    // 
+
+    // pm.test("petitionId is returned", function () {
+
+    //     pm.expect(pm.response.json().petitionId).to.be.a("number")
+
+    // })
+
+    // 
+
+    // pm.test("Set post_petition_id after creation", function() {
+
+    //     const petitionId = pm.response.json().petitionId;
+
+    //     if (typeof petitionId !== "undefined") {
+
+    //         pm.globals.set("post_petition_id", petitionId);
+
+    //     }
+
+    // });
+%}
+
+###
+# group: petitions.supportTiers
+# @name [HELPER] GET /petition/id (get supportTierId)
+GET {{BASE_URL}}/petitions/{{post_petition_id}}
+X-Authorization: {{auth_token}}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("Set post_petition_support_tier_id after creation", function() {
+
+    //     try {
+
+    //         const petitionSupportTierId = pm.response.json().supportTiers[0].supportTierId;
+
+    //         if (typeof petitionSupportTierId !== "undefined") {
+
+    //             pm.globals.set("post_petition_support_tier_id", petitionSupportTierId);
+
+    //         }
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("INVALID RESPONSE")
+
+    //     }
+
+    // });
+%}
+
+###
+# group: petitions.supportTiers
+# @name PUT /petitions/id/supportTiers (NaN)
+PUT {{BASE_URL}}/petitions/not_an_id/supportTiers
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "tier 1",
+  "description": "first tier",
+  "cost": 0
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400, 403 or 404", function () {
+
+    //     pm.expect(pm.response.code).to.be.oneOf([400, 403, 404]);
+
+    // });
+%}
+
+###
+# group: petitions.supportTiers
+# @name PUT /petitions/id/supportTiers (Not Found)
+PUT {{BASE_URL}}/petitions/9999/supportTiers
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "tier 1",
+  "description": "first tier",
+  "cost": 0
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 404 (403 also accepted)", function () {
+
+    //     pm.expect(pm.response.code).to.be.oneOf([403, 404]);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supportTiers
+# @name PUT /petitions/id/supportTiers (no title)
+PUT {{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "description": "A new tier",
+  "cost": 0
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supportTiers
+# @name PUT /petitions/id/supportTiers (cost negative)
+PUT {{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "tier 1",
+  "description": "first tier",
+  "cost": -10
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supportTiers
+# @name PUT /petitions/id/supportTiers
+PUT {{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "tier 1",
+  "description": "first tier",
+  "cost": 10
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 201", function () {
+
+    //     pm.response.to.have.status(201);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supportTiers
+# @name [HELPER] POST /petition (many supportTiers)
+POST {{BASE_URL}}/petitions
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "My newerer petition",
+  "description": "My newer petition description",
+  "categoryId": 1,
+  "supportTiers": [
+    {
+      "title": "Free tier",
+      "description": "Its free",
+      "cost": 0
+    },
+    {
+      "title": "Low tier",
+      "description": "Its not free",
+      "cost": 15
+    },
+    {
+      "title": "High tier",
+      "description": "Its really not free",
+      "cost": 250
+    }
+  ]
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 201", function () {
+
+    //     pm.response.to.have.status(201);
+
+    // });
+
+    // 
+
+    // pm.test("petitionId is returned", function () {
+
+    //     pm.expect(pm.response.json().petitionId).to.be.a("number")
+
+    // })
+
+    // 
+
+    // pm.test("Set post_petition_3_support_tiers_id after creation", function() {
+
+    //     const petitionId = pm.response.json().petitionId;
+
+    //     if (typeof petitionId !== "undefined") {
+
+    //         pm.globals.set("post_petition_3_support_tiers_id", petitionId);
+
+    //     }
+
+    // });
+%}
+
+###
+# group: petitions.supportTiers
+# @name PUT /petitions/id/supportTiers (invalid - 3 tiers exist)
+PUT {{BASE_URL}}/petitions/{{post_petition_3_support_tiers_id}}/supportTiers
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "tier 1",
+  "description": "first tier",
+  "cost": 10
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 403", function () {
+
+    //     pm.response.to.have.status(403);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supportTiers
+# @name PATCH /petitions/id/supportTiers/id (Forbidden - Someone else's)
+PATCH {{BASE_URL}}/petitions/1/supportTiers/1
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "updated",
+  "description": "updated",
+  "cost": 0
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 404 or 403", function () {
+
+    //     pm.expect(pm.response.code).to.be.oneOf([404, 403]);
+
+    // });
+%}
+
+###
+# group: petitions.supportTiers
+# @name PATCH /petitions/id/supportTiers/id (invalid - title too long)
+PATCH {{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers/{{post_petition_support_tier_id}}
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "i3EC3LhN2TbzaLxLRjedaC9rb4V7cR5rGtuDgVpMStvvRPvFGrENQXkndgX22JbfrkVaq5Mv2TGKPLyLbWKywbrBJ1hGVMSbrR21DFATkzcea6zLkapcyhuL4vK9fwF0N",
+  "description": "updated",
+  "cost": 0
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supportTiers
+# @name PATCH /petitions/id/supportTiers/id (invalid - cost string)
+PATCH {{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers/{{post_petition_support_tier_id}}
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "updated",
+  "description": "updated",
+  "cost": "0"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supportTiers
+# @name PATCH /petitions/id/supportTiers/id (cost only)
+PATCH {{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers/{{post_petition_support_tier_id}}
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "cost": 99
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supportTiers
+# @name [VALIDATE] GET /petition/id (validate patches)
+GET {{BASE_URL}}/petitions/{{post_petition_id}}
+X-Authorization: {{auth_token}}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("expected values have been set", function () {
+
+    //     try {
+
+    //         let supportTier = pm.response.json().supportTiers.find(e => e.supportTierId == pm.globals.get("post_petition_support_tier_id"))
+
+    //         pm.expect(supportTier.title).to.equal("Free tier");
+
+    //         pm.expect(supportTier.description).to.equal("Its free");
+
+    //         pm.expect(supportTier.cost).to.equal(99);
+
+    //     } catch (err) {
+
+    //         console.log(err);
+
+    //         pm.expect.fail("INVALID RESPONSE");
+
+    //     }
+
+    // });
+%}
+
+###
+# group: petitions.supportTiers
+# @name PATCH /petitions/id/supportTiers/id (all)
+PATCH {{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers/{{post_petition_support_tier_id}}
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "updated",
+  "description": "updated",
+  "cost": 150
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supportTiers
+# @name [VALIDATE] GET /petition/id (validate patch)
+GET {{BASE_URL}}/petitions/{{post_petition_id}}
+X-Authorization: {{auth_token}}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("expected values have been set", function() {
+
+    //     try {
+
+    //         let supportTier = pm.response.json().supportTiers.find(e => e.supportTierId == pm.globals.get("post_petition_support_tier_id"))
+
+    //         pm.expect(supportTier.title).to.equal("updated");
+
+    //         pm.expect(supportTier.description).to.equal("updated");
+
+    //         pm.expect(supportTier.cost).to.equal(150);
+
+    //     } catch (err) {
+
+    //         console.log(err);
+
+    //         pm.expect.fail("INVALID RESPONSE");
+
+    //     }
+
+    // });
+%}
+
+###
+# group: petitions.supportTiers
+# @name [HELPER] Add petition with supporter
+//< {%
+    // TODO: you can add here Pre-request handler
+//%}
+POST {{BASE_URL}}/executeSql
+X-Authorization: {{auth_token}}
+Content-Type: text/plain
+
+INSERT INTO `petition` (`id`, `title`, `description`, `creation_date`, `image_filename`, `owner_id`, `category_id`) VALUES (123456, 'example petition 2', 'example description', '2023-10-18 10:10:00', 'petition_3.jpg', {{user_id}}, 2);
+INSERT INTO `support_tier` (`id`, `petition_id`, `title`, `description`, `cost`) VALUES (123456, 123456, 'example tier', 'example tier', 0);
+INSERT INTO `support_tier` (`id`, `petition_id`, `title`, `description`, `cost`) VALUES (123457, 123456, 'example tier 2', 'example tier 2', 0);
+INSERT INTO `supporter` (`petition_id`, `support_tier_id`, `user_id`, `message`, `timestamp`) VALUES (123456, 123456, 1, 'Interesting stuff', '2023-11-07 06:59:58');
+
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200 (created) or 500 (already exists?)", function () {
+
+    //     pm.expect(pm.response.code).to.be.oneOf([200, 500]);
+
+    // });
+%}
+
+###
+# group: petitions.supportTiers
+# @name PATCH /petitions/id/supportTiers/id (invalid - supporter exists)
+PATCH {{BASE_URL}}/petitions/123456/supportTiers/123456
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "updated",
+  "description": "updated",
+  "cost": 0
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 403", function () {
+
+    //     pm.response.to.have.status(403);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supportTiers
+# @name DELETE /petitions/id/supportTiers/id (NaN petitionId)
+DELETE {{BASE_URL}}/petitions/not_a_number/supportTiers/{{post_petition_support_tier_id}}
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "updated",
+  "description": "updated",
+  "cost": 0
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400, 403 or 404", function () {
+
+    //     pm.expect(pm.response.code).to.be.oneOf([400, 403, 404]);
+
+    // });
+%}
+
+###
+# group: petitions.supportTiers
+# @name DELETE /petitions/id/supportTiers/id
+DELETE {{BASE_URL}}/petitions/123456/supportTiers/123457
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "updated",
+  "description": "updated",
+  "cost": 0
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 403", function () {
+
+    //     pm.response.to.have.status(403);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supportTiers
+# @name DELETE /petitions/id/supportTiers/id (invalid - supportTier does not exist)
+DELETE {{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers/9999
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "updated",
+  "description": "updated",
+  "cost": 0
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 404", function () {
+
+    //     pm.response.to.have.status(404);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supportTiers
+# @name DELETE /petitions/id/supportTiers/id (Unauthorized)
+DELETE {{BASE_URL}}/petitions/{{post_petition_id}}/supportTiers/{{post_petition_support_tier_id}}
+Content-Type: application/json
+
+{
+  "title": "updated",
+  "description": "updated",
+  "cost": 0
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 401", function () {
+
+    //     pm.response.to.have.status(401);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supporters
+# @name GET /petitions/id/supporters
+GET {{BASE_URL}}/petitions/1/supporters
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("returns an array of the correct size", function () {
+
+    //     try {
+
+    //         const data = pm.response.json() 
+
+    //         pm.expect(data).to.be.an("array");
+
+    //         pm.expect(data.length).to.equal(3);
+
+    //     } catch (err) {
+
+    //         pm.expect.fail("INVALID RESPONSE")
+
+    //     }
+
+    // })
+
+    // 
+
+    // var expectedOrdering = [3, 2, 1]
+
+    // 
+
+    // pm.test("Valid ordering", function() {
+
+    //     try {
+
+    //         var supporters = pm.response.json()
+
+    //         // console.log(`supporters [${supporters.map(s => s.supportTier)}]`)
+
+    //         for (var i = 0; i<expectedOrdering.length; i++){
+
+    //             if (expectedOrdering[i] !== supporters[i].supportId){
+
+    //                 pm.expect.fail("Invalid ordering of supporters")
+
+    //                 break
+
+    //             }
+
+    //         }
+
+    //     } catch (err) {
+
+    //         console.log(err)
+
+    //         pm.expect.fail("Invalid ordering of petitions")
+
+    //     }
+
+    // })
+
+    // 
+
+    // pm.test("Expected supporter data structure", function() {
+
+    //     try{
+
+    //         var data = pm.response.json()[pm.response.json().length-1]
+
+    //         pm.expect(data.supportId).to.be.a("number");
+
+    //         pm.expect(data.supportTierId).to.be.a("number");
+
+    //         pm.expect(data.message).to.be.a("string");
+
+    //         pm.expect(data.supporterId).to.be.a("number");
+
+    //         pm.expect(data.supporterFirstName).to.be.a("string");
+
+    //         pm.expect(data.supporterLastName).to.be.a("string");
+
+    //         pm.expect(data.timestamp).to.be.a("string");
+
+    //     } catch(err) {
+
+    //         console.log(err)
+
+    //         pm.expect.fail("INVALID RESPONSE")
+
+    //     }
+
+    // })
+
+    // 
+
+    // var expectedData =     {
+
+    //         "supportId": 1,
+
+    //         "supportTierId": 1,
+
+    //         "message": "Love the cause",
+
+    //         "supporterId": 2,
+
+    //         "supporterFirstName": "Chidi",
+
+    //         "supporterLastName": "Anagonye",
+
+    //         "timestamp": "2023-03-19T23:15:18.000Z"
+
+    //     }
+
+    // 
+
+    // pm.test("Valid supporter data", function() {
+
+    //     try{
+
+    //         var data = pm.response.json()
+
+    //         var supporter = data[data.length-1]
+
+    //         for(const [key, value] of Object.entries(expectedData)) {
+
+    //             pm.expect(supporter[key]).to.equal(value)
+
+    //         }
+
+    //     } catch (err) {
+
+    //         console.log(err)
+
+    //         pm.expect.fail("Incorrect petition data")
+
+    //     }
+
+    // })
+%}
+
+###
+# group: petitions.supporters
+# @name POST /petitions/id/supporters (NaN)
+POST {{BASE_URL}}/petitions/not_an_id/supporters
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "supportTierId": 1,
+  "message": "example message"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400, 403 or 404", function () {
+
+    //     pm.expect(pm.response.code).to.be.oneOf([400, 403, 404]);
+
+    // });
+%}
+
+###
+# group: petitions.supporters
+# @name POST /petitions/id/supporters (Forbidden - Own petition)
+POST {{BASE_URL}}/petitions/{{post_petition_id}}/supporters
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+    "supportTierId": {{post_petition_support_tier_id}},
+    "message": "example message"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 403", function () {
+
+    //     pm.response.to.have.status(403);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supporters
+# @name POST /petitions/id/supporters (Not Found)
+POST {{BASE_URL}}/petitions/9999/supporters
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+    "supportTierId": {{post_petition_support_tier_id}},
+    "message": "example message"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 404", function () {
+
+    //     pm.response.to.have.status(404);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supporters
+# @name POST /petitions/id/supporters (invalid - supportTierId string)
+POST {{BASE_URL}}/petitions/1/supporters
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "supportTierId": "1",
+  "message": "example message"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supporters
+# @name POST /petitions/id/supporters (invalid - supportTierId not included)
+POST {{BASE_URL}}/petitions/1/supporters
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "message": "example message"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supporters
+# @name POST /petitions/id/supporters
+POST {{BASE_URL}}/petitions/1/supporters
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "supportTierId": 1,
+  "message": "example message"
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 201", function () {
+
+    //     pm.response.to.have.status(201);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.supporters
+# @name POST /petitions/id/supporters (support same petition at a different tier and no message)
+POST {{BASE_URL}}/petitions/1/supporters
+X-Authorization: {{auth_token}}
+Content-Type: application/json
+
+{
+  "supportTierId": 2
+}
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 201", function () {
+
+    //     pm.response.to.have.status(201);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.images
+# @name GET /petitions/:id/image (png)
+GET {{BASE_URL}}/petitions/1/image
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("Content Type is correct", function() {
+
+    //     pm.response.to.be.header("Content-Type", "image/png");
+
+    // });
+%}
+
+###
+# group: petitions.images
+# @name GET /petitions/:id/image (No image)
+GET {{BASE_URL}}/petitions/{{post_petition_id}}/image
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 404", function () {
+
+    //     pm.response.to.have.status(404);
+
+    // });
+
+    //
+%}
+
+###
+# group: petitions.images
+# @name PUT /petitions/:id/image (jpeg)
+PUT {{BASE_URL}}/petitions/{{post_petition_id}}/image
+Content-Type: image/jpeg
+X-Authorization: {{auth_token}}
+
+< sample.jpg
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 201", function () {
+
+    //     pm.response.to.have.status(201);
+
+    // });
+%}
+
+###
+# group: petitions.images
+# @name GET /petitions/:id/image (jpeg)
+GET {{BASE_URL}}/petitions/{{post_petition_id}}/image
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("Content Type is correct", function() {
+
+    //     pm.response.to.be.header("Content-Type", "image/jpeg");
+
+    // });
+%}
+
+###
+# group: petitions.images
+# @name PUT /petitions/:id/image (gif)
+PUT {{BASE_URL}}/petitions/{{post_petition_id}}/image
+Content-Type: image/gif
+X-Authorization: {{auth_token}}
+
+< sample.gif
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+%}
+
+###
+# group: petitions.images
+# @name GET /petitions/:id/image (gif)
+GET {{BASE_URL}}/petitions/{{post_petition_id}}/image
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 200", function () {
+
+    //     pm.response.to.have.status(200);
+
+    // });
+
+    // 
+
+    // pm.test("Content Type is correct", function() {
+
+    //     pm.response.to.be.header("Content-Type", "image/gif");
+
+    // });
+%}
+
+###
+# group: petitions.images
+# @name PUT /petitions/:id/image (invalid - bmp)
+PUT {{BASE_URL}}/petitions/{{post_petition_id}}/image
+Content-Type: image/bmp
+X-Authorization: {{auth_token}}
+
+< sample.BMP
+
+> {%
+    // TODO: migrate to HTTP Client Response handler API
+    // pm.test("Status code is 400", function () {
+
+    //     pm.response.to.have.status(400);
+
+    // });
+%}
