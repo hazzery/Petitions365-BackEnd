@@ -3,7 +3,6 @@ import {createSession, deleteSession, getUserId} from "../services/sessions";
 import {compare, hash} from "../services/passwords";
 import Logger from "../../config/logger";
 import {getPool} from "../../config/db";
-import {FieldPacket} from "mysql2";
 
 
 async function runSQL(sql: string): Promise<object[]> {
