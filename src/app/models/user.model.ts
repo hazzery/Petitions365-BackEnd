@@ -72,7 +72,7 @@ export async function updateUser(userId: number, token: string, data: UserEdit):
     if (userId !== getUserId(token)) {
         return [403, "Unable to edit other users", null];
     }
-    const fieldsToUpdate = [];
+    const fieldsToUpdate: string[] = [];
     if (data.email) {
         fieldsToUpdate.push(`email = '${data.email}'`);
     }
