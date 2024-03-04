@@ -34,7 +34,7 @@ export async function loginUser(data: UserLogin): Promise<[number, string, objec
     const result = await runSQL(`SELECT id, password
                                  FROM user
                                  WHERE email = '${data.email}'`);
-    const users = result as { id: number, password: string }[]
+    const users = result as { id: number, password: string }[];
     if (users.length === 0) {
         return [401, "Email not registered", null];
     }
