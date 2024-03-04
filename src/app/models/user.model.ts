@@ -63,7 +63,7 @@ export async function viewUser(userId: number, token: string): Promise<[number, 
         return [404, "User not found", null];
     }
     if (userId === getUserId(token)) {
-        return [200, "", users[0]];
+        return [200, "", {firstName: users[0].first_name, lastName: users[0].last_name, email: users[0].email}];
     } else {
         return [200, "User found!", {firstName: users[0].first_name, lastName: users[0].last_name}];
     }
