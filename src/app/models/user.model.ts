@@ -89,11 +89,12 @@ export async function updateUser(userId: number, token: string, data: UserEdit):
         if (data.password === data.currentPassword) {
             return [403, "Password must not match current password", null];
         }
-        const usersHashedPassword = (await runSQL(`SELECT password
+        const result = await runSQL(`SELECT password
                                                   FROM user
-                                                  WHERE id = ${userId}`))[0] as { password: string };
-        if (await compare(data.currentPassword, usersHashedPassword.password)) {
-            fieldsToUpdate.push(`password = '${usersHashedPassword.password}'`);
+                                                  WHERE id = ${userId}`);
+        const usersHashedPassword = (result[0] as { password: string }).password;
+        if (await compare(data.currentPassword, usersHashedPassword)) {
+            fieldsToUpdate.push(`password = '${usersHashedPassword}'`);
         }
     }
     try {
