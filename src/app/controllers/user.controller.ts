@@ -73,7 +73,6 @@ export async function view(request: Request, response: Response): Promise<void> 
     const [status, message, user] = await users.viewUser(userId, currentUser);
     response.statusMessage = message;
     response.status(status).send(user);
-    return;
 }
 
 export async function update(request: Request, response: Response): Promise<void> {
