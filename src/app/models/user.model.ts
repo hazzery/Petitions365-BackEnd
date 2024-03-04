@@ -16,12 +16,13 @@ async function runSQL(sql: string): Promise<object[]> {
     return result as object[];
 }
 
-export async function registerUser(data: UserRegister): Promise<[number, string, void]> {
+export async function registerUser(data: UserRegister): Promise<[number, string, object]> {
     const hashedPassword = await hash(data.password);
     try {
-        await runSQL(`INSERT INTO user (email, first_name, last_name, password)
+        const result = await runSQL(`INSERT INTO user (email, first_name, last_name, password)
                       VALUES ('${data.email}', '${data.firstName}', '${data.lastName}', '${hashedPassword}')`);
-        return [200, "User registered!", null];
+        const userId = (result as unknown as {insertId: number}).insertId;
+        return [201, "User registered!", {userId}];
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') {
             Logger.warn(error.message);
