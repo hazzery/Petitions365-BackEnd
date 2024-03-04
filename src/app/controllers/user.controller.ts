@@ -76,6 +76,13 @@ export async function view(request: Request, response: Response): Promise<void> 
 }
 
 export async function update(request: Request, response: Response): Promise<void> {
-    const editUser = (body: object) => users.updateUser(Number(request.params.id), authorisation(request), body);
+    const token = authorisation(request)
+    if (!token) {
+        Logger.warn("Bad Request: No authorization token");
+        response.statusMessage = "Unauthenticated: No authorization token";
+        response.status(401).send();
+        return;
+    }
+    const editUser = (body: object) => users.updateUser(Number(request.params.id), token, body);
     await processRequestBody(request, response, schemas.user_edit, editUser);
 }
