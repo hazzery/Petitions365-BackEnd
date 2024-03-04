@@ -72,15 +72,15 @@ export async function updateUser(userId: number, token: string, data: UserEdit):
     if (userId !== getUserId(token)) {
         return [403, "Unable to edit other users", null];
     }
-    let fieldsToUpdate = '';
+    const fieldsToUpdate = [];
     if (data.email) {
-        fieldsToUpdate += `email = ${data.email}`;
+        fieldsToUpdate.push(`email = '${data.email}'`);
     }
     if (data.firstName) {
-        fieldsToUpdate += `first_name = ${data.firstName}`;
+        fieldsToUpdate.push(`first_name = '${data.firstName}'`);
     }
     if (data.lastName) {
-        fieldsToUpdate += `last_name = ${data.lastName}`;
+        fieldsToUpdate.push(`last_name = '${data.lastName}'`);
     }
     if (data.password) {
         if (!data.currentPassword) {
@@ -89,18 +89,16 @@ export async function updateUser(userId: number, token: string, data: UserEdit):
         if (data.password === data.currentPassword) {
             return [403, "Password must not match current password", null];
         }
-        const usersHashedPassword = await runSQL(`SELECT password
+        const usersHashedPassword = (await runSQL(`SELECT password
                                                   FROM user
-                                                  WHERE id = ${userId}`)[0] as { password: string };
-        if (await compare(data.currentPassword,))
+                                                  WHERE id = ${userId}`))[0] as { password: string };
+        if (await compare(data.currentPassword, usersHashedPassword.password)) {
+            fieldsToUpdate.push(`password = '${usersHashedPassword.password}'`);
+        }
     }
-    const hashedPassword = await hash(data.password);
     try {
         await runSQL(`UPDATE user
-                      SET email      = '${data.email}',
-                          first_name = '${data.firstName}',
-                          last_name  = '${data.lastName}',
-                          password   = '${hashedPassword}'
+                      SET ${fieldsToUpdate.join(', ')}
                       WHERE id = ${userId}`);
         return [200, "User updated!", null];
     } catch (error) {
