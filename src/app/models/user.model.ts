@@ -3,16 +3,17 @@ import {createSession, deleteSession, getUserId} from "../services/sessions";
 import {compare, hash} from "../services/passwords";
 import Logger from "../../config/logger";
 import {getPool} from "../../config/db";
+import {FieldPacket} from "mysql2";
 
 
-async function runSQL(sql: string): Promise<any> {
+async function runSQL(sql: string): Promise<object[]> {
     const connection = await getPool()?.getConnection();
     if (connection === undefined) {
         throw new Error('Not connected to database!');
     }
-    const result = await connection.query(sql);
+    const [result] = await connection.query(sql);
     connection.release();
-    return result
+    return result as object[];
 }
 
 export async function registerUser(data: UserRegister): Promise<[number, string, void]> {
@@ -69,12 +70,37 @@ export async function viewUser(userId: number, token: string): Promise<[number, 
 
 export async function updateUser(userId: number, token: string, data: UserEdit): Promise<[number, string, object]> {
     if (userId !== getUserId(token)) {
-        return [401, "Unauthorized", null];
+        return [403, "Unable to edit other users", null];
+    }
+    let fieldsToUpdate = '';
+    if (data.email) {
+        fieldsToUpdate += `email = ${data.email}`;
+    }
+    if (data.firstName) {
+        fieldsToUpdate += `first_name = ${data.firstName}`;
+    }
+    if (data.lastName) {
+        fieldsToUpdate += `last_name = ${data.lastName}`;
+    }
+    if (data.password) {
+        if (!data.currentPassword) {
+            return [403, "Please supply current password to update password.", null];
+        }
+        if (data.password === data.currentPassword) {
+            return [403, "Password must not match current password", null];
+        }
+        const usersHashedPassword = await runSQL(`SELECT password
+                                                  FROM user
+                                                  WHERE id = ${userId}`)[0] as { password: string };
+        if (await compare(data.currentPassword,))
     }
     const hashedPassword = await hash(data.password);
     try {
         await runSQL(`UPDATE user
-                      SET email = '${data.email}', first_name = '${data.firstName}', last_name = '${data.lastName}', password = '${hashedPassword}'
+                      SET email      = '${data.email}',
+                          first_name = '${data.firstName}',
+                          last_name  = '${data.lastName}',
+                          password   = '${hashedPassword}'
                       WHERE id = ${userId}`);
         return [200, "User updated!", null];
     } catch (error) {
