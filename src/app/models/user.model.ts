@@ -31,10 +31,9 @@ export async function registerUser(data: UserRegister): Promise<[number, string,
 }
 
 export async function loginUser(data: UserLogin): Promise<[number, string, object]> {
-    const result = await runSQL(`SELECT id, password
+    const users = await runSQL(`SELECT id, password
                                  FROM user
-                                 WHERE email = '${data.email}'`);
-    const users = result as { id: number, password: string }[];
+                                 WHERE email = '${data.email}'`) as { id: number, password: string }[];
     if (users.length === 0) {
         return [401, "Email not registered", null];
     }
@@ -54,10 +53,9 @@ export async function logoutUser(token: string): Promise<[number, string]> {
 }
 
 export async function viewUser(userId: number, token: string): Promise<[number, string, object]> {
-    const result = await runSQL(`SELECT first_name, last_name, email
+    const users = await runSQL(`SELECT first_name, last_name, email
                                  FROM user
-                                 WHERE id = ${userId}`);
-    const users = result as { first_name: string, last_name: string, email: string }[]
+                                 WHERE id = ${userId}`) as { first_name: string, last_name: string, email: string }[];
     if (users.length === 0) {
         return [404, "User not found", null];
     }
