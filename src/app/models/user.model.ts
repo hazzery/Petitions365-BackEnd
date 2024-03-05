@@ -94,7 +94,9 @@ export async function updateUser(userId: number, token: string, data: UserEdit):
                                                   WHERE id = ${userId}`);
         const usersHashedPassword = (result[0] as { password: string }).password;
         if (await compare(data.currentPassword, usersHashedPassword)) {
-            fieldsToUpdate.push(`password = '${usersHashedPassword}'`);
+            fieldsToUpdate.push(`password = '${await hash(data.password)}'`);
+        } else {
+            return [403, "Incorrect password", void 0];
         }
     }
     try {
