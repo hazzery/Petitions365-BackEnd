@@ -15,7 +15,7 @@ async function runSQL(sql: string): Promise<object[]> {
     return result as object[];
 }
 
-export async function registerUser(data: UserRegister): Promise<[number, string, object]> {
+export async function registerUser(data: UserRegister): Promise<[number, string, object | void]> {
     const hashedPassword = await hash(data.password);
     try {
         const result = await runSQL(`INSERT INTO user (email, first_name, last_name, password)
@@ -25,22 +25,22 @@ export async function registerUser(data: UserRegister): Promise<[number, string,
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') {
             Logger.warn(error.message);
-            return [403, "Email address already in use", null];
+            return [403, "Email address already in use", void 0];
         } else throw error;
     }
 }
 
-export async function loginUser(data: UserLogin): Promise<[number, string, object]> {
+export async function loginUser(data: UserLogin): Promise<[number, string, object | void]> {
     const users = await runSQL(`SELECT id, password
                                  FROM user
                                  WHERE email = '${data.email}'`) as { id: number, password: string }[];
     if (users.length === 0) {
-        return [401, "Email not registered", null];
+        return [401, "Email not registered", void 0];
     }
     if (await compare(data.password, users[0].password)) {
         return [200, "User logged in!", {userId: users[0].id, token: createSession(users[0].id)}];
     } else {
-        return [401, "Incorrect password", null];
+        return [401, "Incorrect password", void 0];
     }
 }
 
@@ -52,12 +52,12 @@ export async function logoutUser(token: string): Promise<[number, string]> {
     }
 }
 
-export async function viewUser(userId: number, token: string): Promise<[number, string, object]> {
+export async function viewUser(userId: number, token: string): Promise<[number, string, object | void]> {
     const users = await runSQL(`SELECT first_name, last_name, email
                                  FROM user
                                  WHERE id = ${userId}`) as { first_name: string, last_name: string, email: string }[];
     if (users.length === 0) {
-        return [404, "User not found", null];
+        return [404, "User not found", void 0];
     }
     if (userId === getUserId(token)) {
         return [200, "", {firstName: users[0].first_name, lastName: users[0].last_name, email: users[0].email}];
@@ -66,9 +66,9 @@ export async function viewUser(userId: number, token: string): Promise<[number, 
     }
 }
 
-export async function updateUser(userId: number, token: string, data: UserEdit): Promise<[number, string, object]> {
+export async function updateUser(userId: number, token: string, data: UserEdit): Promise<[number, string, object | void]> {
     if (userId !== getUserId(token)) {
-        return [403, "Unable to edit other users", null];
+        return [403, "Unable to edit other users", void 0];
     }
     const fieldsToUpdate: string[] = [];
     if (data.email) {
@@ -82,10 +82,10 @@ export async function updateUser(userId: number, token: string, data: UserEdit):
     }
     if (data.password) {
         if (!data.currentPassword) {
-            return [403, "Please supply current password to update password.", null];
+            return [403, "Please supply current password to update password.", void 0];
         }
         if (data.password === data.currentPassword) {
-            return [403, "Password must not match current password", null];
+            return [403, "Password must not match current password", void 0];
         }
         const result = await runSQL(`SELECT password
                                                   FROM user
@@ -101,11 +101,11 @@ export async function updateUser(userId: number, token: string, data: UserEdit):
         await runSQL(`UPDATE user
                       SET ${fieldsToUpdate.join(', ')}
                       WHERE id = ${userId}`);
-        return [200, "User updated!", null];
+        return [200, "User updated!", void 0];
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') {
             Logger.warn(error.message);
-            return [403, "Email address already in use", null];
+            return [403, "Email address already in use", void 0];
         } else throw error;
     }
 }

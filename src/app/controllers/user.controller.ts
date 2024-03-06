@@ -18,8 +18,8 @@ async function processRequestBody<Input, Output extends object | void>(
     request: Request,
     response: Response,
     schema: object,
-    callback: (body: Input) => Promise<[number, string, Output]>
-): Promise<Output> {
+    callback: (body: Input) => Promise<[number, string, object | void]>
+): Promise<void> {
     try {
         const validator = ajv.compile<Input>(schema);
         if (!validator(request.body)) {
@@ -30,7 +30,6 @@ async function processRequestBody<Input, Output extends object | void>(
             Logger.info(message);
             response.statusMessage = message;
             response.status(status).send(result);
-            return result;
         }
     } catch (err) {
         Logger.error(err);
@@ -63,7 +62,7 @@ export async function logout(request: Request, response: Response): Promise<void
 
 export async function view(request: Request, response: Response): Promise<void> {
     const userId = Number(request.params.id);
-    if (userId === undefined || isNaN(userId) || userId <= 0) {
+    if (isNaN(userId) || userId <= 0) {
         Logger.warn("Bad Request: Invalid user ID");
         response.statusMessage = "Bad Request: Invalid user ID";
         response.status(400).send();

@@ -4,6 +4,8 @@
     "target": "es6",
     "rootDir": "./src/",
     "outDir": "dist",
+    "strict": true,
+    "useUnknownInCatchVariables": false,
     "esModuleInterop": true,
     "noImplicitAny": true,
     "resolveJsonModule":true,

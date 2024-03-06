@@ -25,6 +25,6 @@ export async function connect(): Promise<void> {
     return;
 }
 
-export function getPool(): mysql.Pool {
+export function getPool(): mysql.Pool | null {
     return state.pool;
 }
