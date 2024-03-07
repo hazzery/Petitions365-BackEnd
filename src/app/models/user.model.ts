@@ -1,3 +1,5 @@
+import {OkPacket, ResultSetHeader, RowDataPacket} from "mysql2";
+
 import {UserEdit, UserLogin, UserRegister} from "../types/requestBodySchemaInterfaces";
 import {createSession, deleteSession, getUserId} from "../services/sessions";
 import {compare, hash} from "../services/passwords";
@@ -5,22 +7,26 @@ import Logger from "../../config/logger";
 import {getPool} from "../../config/db";
 
 
-async function runSQL(sql: string): Promise<object[]> {
+async function runSQL<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+    sql: string
+): Promise<T> {
     const connection = await getPool()?.getConnection();
     if (connection === undefined) {
         throw new Error('Not connected to database!');
     }
-    const [result] = await connection.query(sql);
+    const [result] = await connection.query<T>(sql);
     connection.release();
-    return result as object[];
+    return result;
 }
 
 export async function registerUser(data: UserRegister): Promise<[number, string, object | void]> {
     const hashedPassword = await hash(data.password);
     try {
-        const result = await runSQL(`INSERT INTO user (email, first_name, last_name, password)
-                      VALUES ('${data.email}', '${data.firstName}', '${data.lastName}', '${hashedPassword}')`);
-        const userId = (result as unknown as {insertId: number}).insertId;
+        const result = await runSQL<ResultSetHeader>(
+            `INSERT INTO user (email, first_name, last_name, password)
+             VALUES ('${data.email}', '${data.firstName}', '${data.lastName}', '${hashedPassword}')`
+        );
+        const userId = result.insertId;
         return [201, "User registered!", {userId}];
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') {
@@ -31,14 +37,21 @@ export async function registerUser(data: UserRegister): Promise<[number, string,
 }
 
 export async function loginUser(data: UserLogin): Promise<[number, string, object | void]> {
-    const users = await runSQL(`SELECT id, password
-                                 FROM user
-                                 WHERE email = '${data.email}'`) as { id: number, password: string }[];
-    if (users.length === 0) {
+    interface User extends RowDataPacket {
+        id: number,
+        password: string
+    }
+
+    const [user] = await runSQL<User[]>(
+        `SELECT id, password
+         FROM user
+         WHERE email = '${data.email}'`
+    );
+    if (user === undefined) {
         return [401, "Email not registered", void 0];
     }
-    if (await compare(data.password, users[0].password)) {
-        return [200, "User logged in!", {userId: users[0].id, token: createSession(users[0].id)}];
+    if (await compare(data.password, user.password)) {
+        return [200, "User logged in!", {userId: user.id, token: createSession(user.id)}];
     } else {
         return [401, "Incorrect password", void 0];
     }
@@ -53,16 +66,24 @@ export async function logoutUser(token: string): Promise<[number, string]> {
 }
 
 export async function viewUser(userId: number, token: string): Promise<[number, string, object | void]> {
-    const users = await runSQL(`SELECT first_name, last_name, email
-                                 FROM user
-                                 WHERE id = ${userId}`) as { first_name: string, last_name: string, email: string }[];
-    if (users.length === 0) {
+    interface User extends RowDataPacket {
+        first_name: string,
+        last_name: string,
+        email: string
+    }
+
+    const [user] = await runSQL<User[]>(
+        `SELECT first_name, last_name, email
+         FROM user
+         WHERE id = ${userId}`
+    );
+    if (user === undefined) {
         return [404, "User not found", void 0];
     }
     if (userId === getUserId(token)) {
-        return [200, "", {firstName: users[0].first_name, lastName: users[0].last_name, email: users[0].email}];
+        return [200, "", {firstName: user.first_name, lastName: user.last_name, email: user.email}];
     } else {
-        return [200, "User found!", {firstName: users[0].first_name, lastName: users[0].last_name}];
+        return [200, "User found!", {firstName: user.first_name, lastName: user.last_name}];
     }
 }
 
@@ -87,11 +108,17 @@ export async function updateUser(userId: number, token: string, data: UserEdit):
         if (data.password === data.currentPassword) {
             return [403, "Password must not match current password", void 0];
         }
-        const result = await runSQL(`SELECT password
-                                                  FROM user
-                                                  WHERE id = ${userId}`);
-        const usersHashedPassword = (result[0] as { password: string }).password;
-        if (await compare(data.currentPassword, usersHashedPassword)) {
+
+        interface User extends RowDataPacket {
+            password: string
+        }
+
+        const [user] = await runSQL<User[]>(
+            `SELECT password
+             FROM user
+             WHERE id = ${userId}`
+        );
+        if (await compare(data.currentPassword, user.password)) {
             fieldsToUpdate.push(`password = '${await hash(data.password)}'`);
         } else {
             return [403, "Incorrect password", void 0];
