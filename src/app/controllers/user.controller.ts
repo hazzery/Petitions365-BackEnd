@@ -14,7 +14,7 @@ function authorisation(request: Request): string {
     return request.headers["x-authorization"] as string;
 }
 
-async function processRequestBody<Input, Output extends object | void>(
+async function processRequestBody<Input>(
     request: Request,
     response: Response,
     schema: object,
