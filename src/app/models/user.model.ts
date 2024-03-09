@@ -24,7 +24,7 @@ export async function registerUser(data: UserRegister): Promise<[number, string,
     try {
         const result = await runSQL<ResultSetHeader>(
             `INSERT INTO user (email, first_name, last_name, password)
-             VALUES ('${data.email}', '${data.firstName}', '${data.lastName}', '${hashedPassword}')`
+             VALUES ('${data.email}', '${data.firstName}', '${data.lastName}', '${hashedPassword}');`
         );
         const userId = result.insertId;
         return [201, "User registered!", {userId}];
@@ -45,7 +45,7 @@ export async function loginUser(data: UserLogin): Promise<[number, string, objec
     const [user] = await runSQL<User[]>(
         `SELECT id, password
          FROM user
-         WHERE email = '${data.email}'`
+         WHERE email = '${data.email}';`
     );
     if (user === undefined) {
         return [401, "Email not registered", void 0];
@@ -75,7 +75,7 @@ export async function viewUser(userId: number, token: string): Promise<[number, 
     const [user] = await runSQL<User[]>(
         `SELECT first_name, last_name, email
          FROM user
-         WHERE id = ${userId}`
+         WHERE id = ${userId};`
     );
     if (user === undefined) {
         return [404, "User not found", void 0];
@@ -116,7 +116,7 @@ export async function updateUser(userId: number, token: string, data: UserEdit):
         const [user] = await runSQL<User[]>(
             `SELECT password
              FROM user
-             WHERE id = ${userId}`
+             WHERE id = ${userId};`
         );
         if (await compare(data.currentPassword, user.password)) {
             fieldsToUpdate.push(`password = '${await hash(data.password)}'`);
@@ -125,9 +125,11 @@ export async function updateUser(userId: number, token: string, data: UserEdit):
         }
     }
     try {
-        await runSQL(`UPDATE user
-                      SET ${fieldsToUpdate.join(', ')}
-                      WHERE id = ${userId}`);
+        await runSQL(
+            `UPDATE user
+             SET ${fieldsToUpdate.join(', ')}
+             WHERE id = ${userId};`
+        );
         return [200, "User updated!", void 0];
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') {
