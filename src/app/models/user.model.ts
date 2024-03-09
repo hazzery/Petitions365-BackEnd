@@ -1,23 +1,11 @@
-import {OkPacket, ResultSetHeader, RowDataPacket} from "mysql2";
+import {ResultSetHeader, RowDataPacket} from "mysql2";
 
 import {UserEdit, UserLogin, UserRegister} from "../types/requestBodySchemaInterfaces";
 import {createSession, deleteSession, getUserId} from "../services/sessions";
 import {compare, hash} from "../services/passwords";
 import Logger from "../../config/logger";
-import {getPool} from "../../config/db";
+import {runSQL} from "../../config/db";
 
-
-async function runSQL<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
-    sql: string
-): Promise<T> {
-    const connection = await getPool()?.getConnection();
-    if (connection === undefined) {
-        throw new Error('Not connected to database!');
-    }
-    const [result] = await connection.query<T>(sql);
-    connection.release();
-    return result;
-}
 
 export async function registerUser(data: UserRegister): Promise<[number, string, object | void]> {
     const hashedPassword = await hash(data.password);

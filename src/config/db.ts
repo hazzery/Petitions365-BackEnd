@@ -1,3 +1,4 @@
+import {OkPacket, ResultSetHeader, RowDataPacket} from "mysql2";
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 
@@ -27,4 +28,16 @@ export async function connect(): Promise<void> {
 
 export function getPool(): mysql.Pool | null {
     return state.pool;
+}
+
+export async function runSQL<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+    sql: string
+): Promise<T> {
+    const connection = await state.pool?.getConnection();
+    if (connection === undefined) {
+        throw new Error('Not connected to database!');
+    }
+    const [result] = await connection.query<T>(sql);
+    connection.release();
+    return result;
 }
