@@ -1,22 +1,46 @@
-const sessions = new Map<string, number>();
+import {ResultSetHeader, RowDataPacket} from "mysql2";
+
+import {runSQL} from "../../config/db";
+
+
+const existingTokens = new Set<string>();
 
 function generateToken(): string {
     return Math.random().toString(36).substring(2); // remove `0.`
 }
 
-export function createSession(userId: number): string {
+export async function createSession(userId: number): Promise<string> {
     let token = generateToken();
-    while (sessions.has(token)) {
+    while (existingTokens.has(token)) {
         token = generateToken();
     }
-    sessions.set(token, userId);
+    await runSQL(
+        `UPDATE user
+         SET auth_token = '${token}'
+         WHERE id = ${userId};`
+    );
+    existingTokens.add(token);
+
     return token;
 }
 
-export function deleteSession(token: string): boolean {
-    return sessions.delete(token);
+export async function deleteSession(token: string): Promise<boolean> {
+    const result: ResultSetHeader = await runSQL(
+        `UPDATE user
+         SET auth_token = null
+         WHERE auth_token = ${token};`
+    )
+    return result.affectedRows > 0;
 }
 
-export function getUserId(token: string): number | undefined {
-    return sessions.get(token);
+export async function getUserId(token: string): Promise<number | undefined> {
+    interface User extends RowDataPacket {
+        id: number;
+    }
+    const [user] = await runSQL<User[]>(
+        `SELECT id
+         FROM user
+         WHERE auth_token = ${token};`
+    );
+    return user.id;
 }

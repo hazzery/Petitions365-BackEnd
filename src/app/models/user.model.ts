@@ -39,14 +39,14 @@ export async function loginUser(data: UserLogin): Promise<[number, string, objec
         return [401, "Email not registered", void 0];
     }
     if (await compare(data.password, user.password)) {
-        return [200, "User logged in!", {userId: user.id, token: createSession(user.id)}];
+        return [200, "User logged in!", {userId: user.id, token: await createSession(user.id)}];
     } else {
         return [401, "Incorrect password", void 0];
     }
 }
 
 export async function logoutUser(token: string): Promise<[number, string]> {
-    if (deleteSession(token)) {
+    if (await deleteSession(token)) {
         return [200, "User logged out!"];
     } else {
         return [401, "Cannot log out if you are not logged in."];
@@ -68,7 +68,7 @@ export async function viewUser(userId: number, token: string): Promise<[number, 
     if (user === undefined) {
         return [404, "User not found", void 0];
     }
-    if (userId === getUserId(token)) {
+    if (userId === await getUserId(token)) {
         return [200, "", {firstName: user.first_name, lastName: user.last_name, email: user.email}];
     } else {
         return [200, "User found!", {firstName: user.first_name, lastName: user.last_name}];
@@ -76,7 +76,7 @@ export async function viewUser(userId: number, token: string): Promise<[number, 
 }
 
 export async function updateUser(userId: number, token: string, data: UserEdit): Promise<[number, string, object | void]> {
-    if (userId !== getUserId(token)) {
+    if (userId !== await getUserId(token)) {
         return [403, "Unable to edit other users", void 0];
     }
     const fieldsToUpdate: string[] = [];
