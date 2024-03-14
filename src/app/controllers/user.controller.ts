@@ -1,16 +1,28 @@
 import {Request, Response} from "express";
+import addFormats from 'ajv-formats';
+import Ajv from 'ajv';
 
 import * as schemas from '../resources/schemas.json';
 import * as users from '../models/user.model';
 import Logger from '../../config/logger';
+import {processRequestBody, respond} from './common.controller';
 
+
+const ajv = new Ajv({removeAdditional: 'all'});
+addFormats(ajv);
+
+function authorisation(request: Request): string {
+    return request.headers["x-authorization"] as string;
+}
 
 export async function register(request: Request, response: Response): Promise<void> {
-    await processRequestBody(request, response, schemas.user_register, users.registerUser);
+    const callback = () => processRequestBody(request.body, schemas.user_register, users.registerUser);
+    await respond(response, callback);
 }
 
 export async function login(request: Request, response: Response): Promise<void> {
-    await processRequestBody(request, response, schemas.user_login, users.loginUser);
+    const callback = () => processRequestBody(request.body, schemas.user_login, users.loginUser);
+    await respond(response, callback);
 }
 
 export async function logout(request: Request, response: Response): Promise<void> {
@@ -50,5 +62,6 @@ export async function update(request: Request, response: Response): Promise<void
         return;
     }
     const editUser = (body: object) => users.updateUser(Number(request.params.id), token, body);
-    await processRequestBody(request, response, schemas.user_edit, editUser);
+    const callback = () => processRequestBody(request, schemas.user_edit, editUser);
+    await respond(response, callback);
 }
