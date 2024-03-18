@@ -39,7 +39,7 @@ export async function loginUser(data: UserLogin): Promise<[number, string, objec
         return [401, "Email not registered", void 0];
     }
     if (await compare(data.password, user.password)) {
-        return [200, "User logged in!", {userId: user.id, token: await createSession(user.id)}];
+        return [200, `User ${user.id} logged in!`, {userId: user.id, token: await createSession(user.id)}];
     } else {
         return [401, "Incorrect password", void 0];
     }
