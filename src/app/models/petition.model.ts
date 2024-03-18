@@ -1,61 +1,41 @@
+import {ResultSetHeader} from "mysql2";
+
 import {PetitionPatch, PetitionPost, PetitionSearch} from "../types/requestBodySchemaInterfaces";
+import {Petition, SupportTier} from "../types/databaseRowDataPackets";
+import snakeToCamel from "../services/snakeToCamelConverter";
 import {runSQL} from "../../config/db";
-import {ResultSetHeader, RowDataPacket} from "mysql2";
-import Logger from "../../config/logger";
 
 export async function allPetitions(body: PetitionSearch): Promise<[number, string, object | void]> {
     return [501, "not implemented", void 0];
 }
 
 export async function singlePetition(petitionId: number): Promise<[number, string, object | void]> {
-    interface Petition extends RowDataPacket {
-        description: string;
-        money_raised: number;
-        id: number;
-        title: string;
-        category_id: number;
-        owner_id: number;
-        first_name: string;
-        last_name: string;
-        number_of_supporters: number;
-        creation_date: string;
-    }
-
     try {
         const [petition] = await runSQL<Petition[]>(
             `SELECT petition.description,
-                    petition.id,
-                    petition.title,
-                    petition.category_id,
-                    petition.owner_id,
-                    user.first_name,
-                    user.last_name,
-                    COUNT(supporter.user_id) AS number_of_supporters,
-                    petition.creation_date
+                    SUM(support_tier.cost)            AS money_raised,
+                    petition.id                       AS petition_id,
+                    petition.title                    AS title,
+                    petition.category_id              AS category_id,
+                    petition.owner_id                 AS owner_id,
+                    owner.first_name                  AS owner_first_name,
+                    owner.last_name                   AS owner_last_name,
+                    COUNT(DISTINCT supporter.user_id) AS number_of_supporters,
+                    petition.creation_date            AS creation_date
              FROM petition
-                      JOIN user ON user.id = petition.owner_id
-                      JOIN support_tier ON petition.id = support_tier.petition_id
-                      JOIN supporter ON petition.id = supporter.petition_id
+                      JOIN user AS owner ON owner.id = petition.owner_id
+                      JOIN supporter ON supporter.petition_id = petition.id
+                      JOIN support_tier ON support_tier.id = supporter.support_tier_id
              WHERE petition.id = ${petitionId}
              GROUP BY petition.id;`
         );
-        Logger.info(Object.entries(petition).map(([key, value]: [any, any]) => key + " : " + value));
-        const result = {
-            description: petition.description,
-            moneyRaised: petition.money_raised,
-            supportTiers: [
-                {}, {}, {}
-            ],
-            petitionId: petition.id,
-            title: petition.title,
-            categoryId: petition.category_id,
-            ownerId: petition.owner_id,
-            ownerFirstName: petition.first_name,
-            ownerLastName: petition.last_name,
-            numberOfSupporters: petition.number_of_supporters,
-            creationDate: petition.creation_date
-        }
-        return [200, "Petition found", result];
+        const camelCasePetition = snakeToCamel(petition);
+        camelCasePetition.supportTiers = snakeToCamel(await runSQL<SupportTier[]>(
+            `SELECT id AS support_tier_id, title, description, cost
+             FROM support_tier
+             WHERE petition_id = ${petitionId};`
+        ));
+        return [200, "Petition found", camelCasePetition];
     } catch (error) {
         return [404, `Petition with id ${petitionId} does not exist`, void 0];
     }
