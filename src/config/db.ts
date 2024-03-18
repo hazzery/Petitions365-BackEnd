@@ -23,7 +23,6 @@ export async function connect(): Promise<void> {
     });
     await state.pool.getConnection(); // Check connection
     Logger.info(`Successfully connected to database`);
-    return;
 }
 
 export function getPool(): mysql.Pool | null {
