@@ -21,7 +21,7 @@ export interface UserEdit {
 export interface PetitionSearch {
     q?: string,
     ownerId?: string,
-    supportedId?: string,
+    supporterId?: string,
     startIndex?: string,
     count?: string,
     supportingCost?: string,
