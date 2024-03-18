@@ -11,8 +11,8 @@ import {processRequestBody, respond} from './common.controller';
 const ajv = new Ajv({removeAdditional: 'all'});
 addFormats(ajv);
 
-function authorisation(request: Request): string {
-    return request.headers["x-authorization"] as string;
+function authenticationToken(request: Request): string | undefined {
+    return request.headers["x-authorization"] as string | undefined;
 }
 
 export async function register(request: Request, response: Response): Promise<void> {
@@ -26,7 +26,7 @@ export async function login(request: Request, response: Response): Promise<void>
 }
 
 export async function logout(request: Request, response: Response): Promise<void> {
-    const token = authorisation(request);
+    const token = authenticationToken(request);
     if (token === undefined) {
         Logger.warn("Unauthorized: No token provided!");
         response.statusMessage = "Unauthorized: No token provided!";
@@ -47,14 +47,20 @@ export async function view(request: Request, response: Response): Promise<void> 
         response.status(400).send();
         return;
     }
-    const currentUser = authorisation(request);
-    const [status, message, user] = await users.viewUser(userId, currentUser);
+    const token = authenticationToken(request);
+    if (token === undefined) {
+        Logger.warn("Unauthorized: No token provided!");
+        response.statusMessage = "Unauthorized: No token provided!";
+        response.status(401).send();
+        return;
+    }
+    const [status, message, user] = await users.viewUser(userId, token);
     response.statusMessage = message;
     response.status(status).send(user);
 }
 
 export async function update(request: Request, response: Response): Promise<void> {
-    const token = authorisation(request)
+    const token = authenticationToken(request)
     if (!token) {
         Logger.warn("Bad Request: No authorization token");
         response.statusMessage = "Unauthenticated: No authorization token";
