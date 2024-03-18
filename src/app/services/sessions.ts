@@ -28,7 +28,7 @@ export async function deleteSession(token: string): Promise<boolean> {
     const result: ResultSetHeader = await runSQL(
         `UPDATE user
          SET auth_token = null
-         WHERE auth_token = ${token};`
+         WHERE auth_token = '${token}';`
     )
     return result.affectedRows > 0;
 }
@@ -40,7 +40,7 @@ export async function getUserId(token: string): Promise<number | undefined> {
     const [user] = await runSQL<User[]>(
         `SELECT id
          FROM user
-         WHERE auth_token = ${token};`
+         WHERE auth_token = '${token}';`
     );
     return user.id;
 }
