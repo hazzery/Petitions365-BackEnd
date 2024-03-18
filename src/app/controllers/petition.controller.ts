@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 
-import * as schemas from '../resources/schemas.json'
+import {PetitionPost} from "../types/requestBodySchemaInterfaces";
 import {processRequestBody, respond} from './common.controller';
 import {
     allCategories,
@@ -10,6 +10,7 @@ import {
     singlePetition,
     updatePetition
 } from "../models/petition.model";
+import * as schemas from '../resources/schemas.json'
 
 export async function getAllPetitions(request: Request, response: Response): Promise<void> {
     const callback = async () => processRequestBody(request, schemas.petition_search, allPetitions);
@@ -22,7 +23,8 @@ export async function getPetition(request: Request, response: Response): Promise
 }
 
 export async function addPetition(request: Request, response: Response): Promise<void> {
-    const callback = async () => processRequestBody(request, schemas.petition_post, createPetition);
+    const makePetition = async (body: PetitionPost) => createPetition(body, parseInt(request.params.id, 10))
+    const callback = async () => processRequestBody(request, schemas.petition_post, makePetition);
     await respond(response, callback);
 }
 
