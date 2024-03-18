@@ -4,7 +4,7 @@ import {connect} from './config/db';
 
 
 const app = express();
-const port = process.env.PORT || 4941;
+const port = process.env.PORT ?? 4941;
 
 async function main() {
     try {
