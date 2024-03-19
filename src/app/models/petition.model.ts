@@ -122,7 +122,9 @@ export async function singlePetition(petitionId: number): Promise<[number, strin
     }
 }
 
-export async function createPetition(body: PetitionPost, ownerId: number): Promise<[number, string, object | void]> {
+export async function createPetition(
+    body: PetitionPost, ownerId: number
+): Promise<[number, string, { petitionId: number } | void]> {
     try {
         const result = await runSQL<ResultSetHeader>(
             `INSERT INTO petition (title, description, creation_date, owner_id, category_id)
