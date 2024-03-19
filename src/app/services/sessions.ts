@@ -42,5 +42,5 @@ export async function getUserId(token: string): Promise<number | undefined> {
          FROM user
          WHERE auth_token = '${token}';`
     );
-    return user.id;
+    return user?.id;
 }
