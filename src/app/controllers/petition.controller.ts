@@ -13,7 +13,7 @@ import {
 import * as schemas from '../resources/schemas.json'
 
 export async function getAllPetitions(request: Request, response: Response): Promise<void> {
-    const callback = async () => processRequestBody(request, schemas.petition_search, allPetitions);
+    const callback = async () => processRequestBody(request.query, schemas.petition_search, allPetitions);
     await respond(response, callback);
 }
 
@@ -24,12 +24,12 @@ export async function getPetition(request: Request, response: Response): Promise
 
 export async function addPetition(request: Request, response: Response): Promise<void> {
     const makePetition = async (body: PetitionPost) => createPetition(body, parseInt(request.params.id, 10))
-    const callback = async () => processRequestBody(request, schemas.petition_post, makePetition);
+    const callback = async () => processRequestBody(request.body, schemas.petition_post, makePetition);
     await respond(response, callback);
 }
 
 export async function editPetition(request: Request, response: Response): Promise<void> {
-    const callback = async () => processRequestBody(request, schemas.petition_patch, updatePetition);
+    const callback = async () => processRequestBody(request.body, schemas.petition_patch, updatePetition);
     await respond(response, callback);
 }
 
