@@ -2,19 +2,16 @@ import {Request, Response} from "express";
 import addFormats from 'ajv-formats';
 import Ajv from 'ajv';
 
+import {authenticationToken, processRequestBody, respond} from './common.controller';
+import {UserEdit} from "../types/requestBodySchemaInterfaces";
 import * as schemas from '../resources/schemas.json';
 import * as users from '../models/user.model';
 import Logger from '../../config/logger';
-import {processRequestBody, respond} from './common.controller';
-import {UserEdit} from "../types/requestBodySchemaInterfaces";
 
 
 const ajv = new Ajv({removeAdditional: 'all'});
 addFormats(ajv);
 
-function authenticationToken(request: Request): string | undefined {
-    return request.headers["x-authorization"] as string | undefined;
-}
 
 export async function register(request: Request, response: Response): Promise<void> {
     const callback = () => processRequestBody(request.body, schemas.user_register, users.registerUser);

@@ -1,5 +1,5 @@
-import {Response} from "express";
 import addFormats from "ajv-formats";
+import {Request, Response} from "express";
 import Ajv from "ajv";
 
 import Logger from "../../config/logger";
@@ -8,6 +8,10 @@ import Logger from "../../config/logger";
 const ajv = new Ajv({removeAdditional: 'all'});
 addFormats(ajv);
 
+
+export function authenticationToken(request: Request): string | undefined {
+    return request.headers["x-authorization"] as string | undefined;
+}
 
 export async function processRequestBody<Input>(
     body: object,
