@@ -31,7 +31,7 @@ export async function respond(
     callback: () => Promise<[number, string, object | void]>
 ): Promise<void> {
     const [status, message, result] = await callback();
-    Logger.log(status >= 300 ? 'error' : 'info', message);
+    Logger.info(message);
     response.statusMessage = message;
     response.status(status).send(result);
 }
