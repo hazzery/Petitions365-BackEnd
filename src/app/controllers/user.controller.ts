@@ -6,6 +6,7 @@ import * as schemas from '../resources/schemas.json';
 import * as users from '../models/user.model';
 import Logger from '../../config/logger';
 import {processRequestBody, respond} from './common.controller';
+import {UserEdit} from "../types/requestBodySchemaInterfaces";
 
 
 const ajv = new Ajv({removeAdditional: 'all'});
@@ -67,7 +68,14 @@ export async function update(request: Request, response: Response): Promise<void
         response.status(401).send();
         return;
     }
-    const editUser = (body: object) => users.updateUser(Number(request.params.id), token, body);
-    const callback = () => processRequestBody(request, schemas.user_edit, editUser);
+    const userId = parseInt(request.params.id, 10);
+    if (isNaN(userId) || userId <= 0) {
+        Logger.warn("Bad Request: Invalid user ID");
+        response.statusMessage = "Bad Request: Invalid user ID";
+        response.status(400).send();
+        return;
+    }
+    const editUser = async (body: UserEdit) => await users.updateUser(userId, token, body);
+    const callback = async () => await processRequestBody(request.body, schemas.user_edit, editUser);
     await respond(response, callback);
 }
