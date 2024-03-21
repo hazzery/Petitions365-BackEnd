@@ -1,4 +1,4 @@
-import {ResultSetHeader} from "mysql2";
+import {ResultSetHeader, RowDataPacket} from "mysql2";
 
 import {PetitionPatch, PetitionPost, PetitionSearch} from "../types/requestBodySchemaInterfaces";
 import {DetailedPetition, PetitionOverview, SupportTier} from "../types/databaseRowDataPackets";
@@ -131,14 +131,80 @@ export async function createPetition(
     }
 }
 
-export async function updatePetition(body: PetitionPatch): Promise<[number, string, object | void]> {
-    return [501, "not implemented", void 0];
+export async function updatePetition(body: PetitionPatch, petitionId: number, userId: number): Promise<[number, string, object | void]> {
+    interface PetitionId extends RowDataPacket {
+        owner_id: number
+    }
+
+    const [ownerId] = await runSQL<PetitionId[]>(
+        `SELECT owner_id
+         FROM petition
+         WHERE id = ${petitionId};`
+    );
+    if (ownerId?.owner_id !== userId) {
+        return [403, "Unable to edit other users' petitions", void 0];
+    }
+    const fieldsToUpdate: string[] = [];
+    if (body.title) {
+        fieldsToUpdate.push(`title = '${body.title}'`);
+    }
+    if (body.description) {
+        fieldsToUpdate.push(`description = '${body.description}'`);
+    }
+    if (body.categoryId) {
+        fieldsToUpdate.push(`category_id = ${body.categoryId}`);
+    }
+    if (fieldsToUpdate.length === 0) {
+        return [400, "No fields to update", void 0];
+    }
+    await runSQL(
+        `UPDATE petition
+         SET ${fieldsToUpdate.join(", ")}
+         WHERE id = ${petitionId};`
+    );
+    return [200, "Petition updated", void 0];
 }
 
-export async function removePetition(petitionId: number): Promise<[number, string, object | void]> {
-    return [501, "not implemented", void 0];
+export async function removePetition(petitionId: number, userId: number): Promise<[number, string, object | void]> {
+    interface Petition extends RowDataPacket {
+        owner_id: number,
+        number_of_supporters: number
+    }
+
+    const [petition] = await runSQL<Petition[]>(
+        `SELECT owner_id, COUNT(supporter.user_id) AS number_of_supporters
+         FROM petition
+                  JOIN supporter ON supporter.petition_id = petition.id
+         WHERE petition.id = ${petitionId}
+         GROUP BY petition.id;`
+    );
+    if (!petition) {
+        return [404, `Petition with id ${petitionId} does not exist`, void 0];
+    }
+    if (petition.owner_id !== userId) {
+        return [403, "Unable to delete other users' petitions", void 0];
+    }
+    if (petition.number_of_supporters > 0) {
+        return [403, "Unable to delete petition with supporters", void 0];
+    }
+    await runSQL(
+        `DELETE
+         FROM petition
+         WHERE id = ${petitionId};`
+    );
+    return [200, "Petition deleted", void 0];
 }
 
 export async function allCategories(): Promise<[number, string, object | void]> {
-    return [501, "not implemented", void 0];
+    interface Category extends RowDataPacket {
+        category_id: number,
+        name: string
+    }
+
+    const categories = await runSQL<Category[]>(
+        `SELECT id AS category_id, name
+         FROM category;`
+    );
+    const camelCaseCategories = snakeToCamel(categories);
+    return [200, "All categories found", camelCaseCategories];
 }
