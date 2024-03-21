@@ -5,7 +5,7 @@ import Ajv from "ajv";
 import Logger from "../../config/logger";
 
 
-const ajv = new Ajv({removeAdditional: 'all'});
+const ajv = new Ajv({removeAdditional: 'all', coerceTypes: true, strict: true});
 addFormats(ajv);
 
 
