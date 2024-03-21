@@ -1,7 +1,7 @@
 {
-  "name": "seng365-2024-assignment1-reference-project",
+  "name": "seng365-2024-assignment1",
   "version": "0.0.1",
-  "description": "Reference petition site server for SENG365 Assignment 1",
+  "description": "Petition site server API for SENG365 Assignment 1",
   "main": "dist/server.js",
   "scripts": {
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
@@ -10,7 +10,7 @@
     "start": "node .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Morgan English",
+  "author": "Harrison Parkes",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.0.3",
