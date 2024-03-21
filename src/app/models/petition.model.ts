@@ -3,7 +3,7 @@ import {ResultSetHeader} from "mysql2";
 import {PetitionPatch, PetitionPost, PetitionSearch} from "../types/requestBodySchemaInterfaces";
 import {DetailedPetition, PetitionOverview, SupportTier} from "../types/databaseRowDataPackets";
 import snakeToCamel from "../services/snakeToCamelConverter";
-import {runSQL} from "../../config/db";
+import {runPreparedSQL, runSQL} from "../../config/db";
 
 
 export async function allPetitions(body: PetitionSearch): Promise<[number, string, object | void]> {
@@ -117,9 +117,10 @@ export async function createPetition(
     body: PetitionPost, ownerId: number
 ): Promise<[number, string, { petitionId: number } | void]> {
     try {
-        const result = await runSQL<ResultSetHeader>(
+        const result = await runPreparedSQL<ResultSetHeader>(
             `INSERT INTO petition (title, description, creation_date, owner_id, category_id)
-             VALUES ('${body.title}', '${body.description}', '${Date.now()}', '${ownerId}', ${12});`
+             VALUES ('${body.title}', '${body.description}', ?, ${ownerId}, ${body.categoryId});`,
+            [new Date()]
         );
         const petitionId = result.insertId;
         return [201, "New petition created", {petitionId}];
