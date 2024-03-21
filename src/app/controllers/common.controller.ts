@@ -5,8 +5,13 @@ import Ajv from "ajv";
 import Logger from "../../config/logger";
 
 
-const ajv = new Ajv({removeAdditional: 'all', coerceTypes: true, strict: true});
+const ajv = new Ajv({removeAdditional: 'all', strict: true});
 addFormats(ajv);
+
+ajv.addFormat("integer", {
+    type: "string",
+    validate: /^[0-9]+$/
+});
 
 
 export function authenticationToken(request: Request): string | undefined {
