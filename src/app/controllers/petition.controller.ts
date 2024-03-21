@@ -24,7 +24,17 @@ export async function getPetition(request: Request, response: Response): Promise
 }
 
 export async function addPetition(request: Request, response: Response): Promise<void> {
-    const makePetition = async (body: PetitionPost) => createPetition(body, parseInt(request.params.id, 10))
+    const token = authenticationToken(request);
+    if (token === undefined) {
+        response.status(401).send("Unauthenticated: No x-authorization header");
+        return;
+    }
+    const userId = await getUserId(token);
+    if (userId === undefined) {
+        response.status(401).send("Unauthenticated: Invalid token");
+        return;
+    }
+    const makePetition = async (body: PetitionPost) => createPetition(body, userId)
     const callback = async () => processRequestBody(request.body, schemas.petition_post, makePetition);
     await respond(response, callback);
 }
