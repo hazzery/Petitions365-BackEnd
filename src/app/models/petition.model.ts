@@ -1,8 +1,8 @@
 import {ResultSetHeader, RowDataPacket} from "mysql2";
+import humps from "humps";
 
 import {PetitionPatch, PetitionPost, PetitionSearch} from "../types/requestBodySchemaInterfaces";
 import {DetailedPetition, PetitionOverview, SupportTier} from "../types/databaseRowDataPackets";
-import snakeToCamel from "../services/snakeToCamelConverter";
 import {runPreparedSQL, runSQL} from "../../config/db";
 
 
@@ -77,7 +77,7 @@ export async function allPetitions(body: PetitionSearch): Promise<[number, strin
     if (body.count) {
         petitions.splice(parseInt(body.count, 10), petitions.length);
     }
-    const camelCasePetitions = snakeToCamel(petitions);
+    const camelCasePetitions = humps.camelizeKeys(petitions);
     return [200, "All petitions matching given query have been sent", {petitions: camelCasePetitions, count}];
 }
 
@@ -101,8 +101,8 @@ export async function singlePetition(petitionId: number): Promise<[number, strin
              WHERE petition.id = ${petitionId}
              GROUP BY petition.id;`
         );
-        const camelCasePetition = snakeToCamel(petition);
-        camelCasePetition.supportTiers = snakeToCamel(await runSQL<SupportTier[]>(
+        const camelCasePetition = humps.camelizeKeys(petition) as any;
+        camelCasePetition.supportTiers = humps.camelizeKeys(await runSQL<SupportTier[]>(
             `SELECT id AS support_tier_id, title, description, cost
              FROM support_tier
              WHERE petition_id = ${petitionId};`
@@ -205,6 +205,6 @@ export async function allCategories(): Promise<[number, string, object | void]> 
         `SELECT id AS category_id, name
          FROM category;`
     );
-    const camelCaseCategories = snakeToCamel(categories);
+    const camelCaseCategories = humps.camelizeKeys(categories);
     return [200, "All categories found", camelCaseCategories];
 }
