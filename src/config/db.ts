@@ -40,3 +40,16 @@ export async function runSQL<T extends RowDataPacket[][] | RowDataPacket[] | OkP
     connection.release();
     return result;
 }
+
+export async function runPreparedSQL<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket | OkPacket[] | ResultSetHeader>(
+    sql: string,
+    values: any[]
+): Promise<T> {
+    const connection = await state.pool?.getConnection();
+    if (connection === undefined) {
+        throw new Error('Not connected to database!');
+    }
+    const [result] = await connection.query<T>(sql, values);
+    connection.release();
+    return result;
+}
