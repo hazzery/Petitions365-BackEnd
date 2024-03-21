@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 
 import {deleteUserImage, getUserImage, uploadUserImage} from "../models/user.image.model";
-import {authenticationToken, respond} from "./common.controller";
+import {authenticationToken, respond, respondImage} from "./common.controller";
 import {getUserId} from "../services/sessions";
 
 
@@ -16,7 +16,7 @@ export async function getImage(request: Request, response: Response): Promise<vo
         return;
     }
     const callback = () => getUserImage(userId);
-    await respond(response, callback);
+    await respondImage(response, callback);
 }
 
 export async function setImage(request: Request, response: Response): Promise<void> {

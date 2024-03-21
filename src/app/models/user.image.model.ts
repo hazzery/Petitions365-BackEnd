@@ -21,14 +21,15 @@ async function checkUserImage(userId: number): Promise<string | null | undefined
     return user?.image_filename;
 }
 
-export async function getUserImage(userId: number): Promise<[number, string, object | void]> {
+export async function getUserImage(userId: number): Promise<[number, string, object | void, string]> {
     const fileName = await checkUserImage(userId);
     if (!fileName) {
-        return [404, `User ${userId} does not have a profile image`, void 0];
+        return [404, `User ${userId} does not have a profile image`, void 0, ""];
     }
     const filePath = path.join(imageDirectory, fileName);
     const image = await fs.promises.readFile(filePath);
-    return [200, `Found image for user ${userId}`, image];
+    const mimeType = 'image/' + fileName.split('.')[1];
+    return [200, `Found image for user ${userId}`, image, mimeType];
 }
 
 export async function uploadUserImage(imageBuffer: Buffer, userId: number, fileExtension: string): Promise<[number, string, object | void]> {

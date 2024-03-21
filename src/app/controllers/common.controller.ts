@@ -39,3 +39,14 @@ export async function respond(
     response.statusMessage = message;
     response.status(status).send(result);
 }
+
+export async function respondImage(
+    response: Response,
+    callback: () => Promise<[number, string, object | void, string]>
+): Promise<void> {
+    const [status, message, result, mimeType] = await callback();
+    Logger.info(message);
+    response.statusMessage = message;
+    response.contentType(mimeType);
+    response.status(status).send(result);
+}
