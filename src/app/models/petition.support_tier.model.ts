@@ -11,19 +11,26 @@ export async function createSupportTier(
     userId: number
 ): Promise<[number, string, object | void]> {
     interface Petition extends RowDataPacket {
-        owner_id: number
+        owner_id: number,
+        number_of_support_tiers: number
     }
+
     const [petition] = await runPreparedSQL<Petition[]>(
-        `SELECT owner_id
+        `SELECT owner_id, COUNT(support_tier.id) AS number_of_support_tiers
          FROM petition
-         WHERE id = ?`,
+                  LEFT JOIN support_tier ON support_tier.petition_id = petition.id
+         WHERE petition.id = ?
+         GROUP BY petition.id`,
         [petitionId]
     );
     if (petition === undefined) {
-        return [404, "Petition not found", void 0];
+        return [404, `Petition with id ${petitionId} not found`, void 0];
     }
     if (petition.owner_id !== userId) {
         return [403, `Forbidden: you do not own petition ${petitionId}`, void 0];
+    }
+    if (petition.number_of_support_tiers >= 3) {
+        return [403, `Forbidden: petition ${petitionId} has reached the maximum number of support tiers`, void 0];
     }
     try {
         const result = await runPreparedSQL<ResultSetHeader>(
