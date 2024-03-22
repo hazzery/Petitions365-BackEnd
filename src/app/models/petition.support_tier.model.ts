@@ -130,7 +130,8 @@ export async function removeSupportTier(
         return [403, "Forbidden, you are not the owner of this petition", void 0];
     }
     await runPreparedSQL(
-        `DELETE FROM support_tier
+        `DELETE
+         FROM support_tier
          WHERE id = ?`,
         [supportTierId]
     );
