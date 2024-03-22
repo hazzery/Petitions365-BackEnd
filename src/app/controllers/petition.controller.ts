@@ -19,7 +19,12 @@ export async function getAllPetitions(request: Request, response: Response): Pro
 }
 
 export async function getPetition(request: Request, response: Response): Promise<void> {
-    const callback = async () => singlePetition(parseInt(request.params.id, 10));
+    const petitionId = parseInt(request.params.id, 10);
+    if (isNaN(petitionId)) {
+        response.status(400).send("Invalid petition id");
+        return;
+    }
+    const callback = async () => singlePetition(petitionId);
     await respond(response, callback);
 }
 
