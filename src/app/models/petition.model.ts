@@ -4,7 +4,6 @@ import humps from "humps";
 import {PetitionPatch, PetitionPost, PetitionSearch} from "../types/requestBodySchemaInterfaces";
 import {DetailedPetition, PetitionOverview, SupportTier} from "../types/databaseRowDataPackets";
 import {runPreparedSQL, runSQL} from "../../config/db";
-import Logger from "../../config/logger";
 
 
 export async function allPetitions(body: PetitionSearch): Promise<[number, string, object | void]> {
@@ -117,12 +116,26 @@ export async function createPetition(
     body: PetitionPost, ownerId: number
 ): Promise<[number, string, { petitionId: number } | void]> {
     try {
-        const result = await runPreparedSQL<ResultSetHeader>(
+        const petitionResult = await runPreparedSQL<ResultSetHeader>(
             `INSERT INTO petition (title, description, creation_date, owner_id, category_id)
              VALUES ('${body.title}', '${body.description}', ?, ${ownerId}, ${body.categoryId});`,
             [new Date()]
         );
-        const petitionId = result.insertId;
+        const petitionId = petitionResult.insertId;
+        const tierNames = new Set();
+        for (const supportTier of body.supportTiers) {
+            tierNames.add(supportTier.title);
+        }
+        if (tierNames.size !== body.supportTiers.length) {
+            return [400, "Support tier titles must be unique", void 0];
+        }
+        for (const supportTier of body.supportTiers) {
+            await runPreparedSQL<ResultSetHeader>(
+                `INSERT INTO support_tier (petition_id, title, description, cost)
+                 VALUES (?, ?, ?, ?);`,
+                [petitionId, supportTier.title, supportTier.description, supportTier.cost]
+            );
+        }
         return [201, `Created petition ${petitionId}`, {petitionId}];
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') {
