@@ -56,24 +56,30 @@ export async function alterSupportTier(
 ): Promise<[number, string, void]> {
     interface SupportTier extends RowDataPacket {
         petition_id: number,
-        owner_id: number
+        owner_id: number,
+        number_of_supporters: number
     }
 
     const [supportTier] = await runPreparedSQL<SupportTier[]>(
-        `SELECT support_tier.petition_id, petition.owner_id
+        `SELECT support_tier.petition_id, petition.owner_id, COUNT(supporter.id) AS number_of_supporters
          FROM support_tier
-                  JOIN petition ON support_tier.petition_id = petition.id
-         WHERE support_tier.id = ?`,
+                  JOIN petition ON petition.id = support_tier.petition_id
+                  LEFT JOIN supporter ON supporter.support_tier_id = support_tier.id
+         WHERE support_tier.id = ?
+         GROUP BY support_tier.id`,
         [supportTierId]
     );
     if (supportTier === undefined) {
         return [404, "Support tier not found", void 0];
     }
+    if (supportTier.owner_id !== userId) {
+        return [403, "Forbidden, you are not the owner of this petition", void 0];
+    }
     if (supportTier.petition_id !== petitionId) {
         return [400, "Petition ID and Support Tier ID do not align", void 0];
     }
-    if (supportTier.owner_id !== userId) {
-        return [403, "Forbidden, you are not the owner of this petition", void 0];
+    if (supportTier.number_of_supporters > 0) {
+        return [403, `Forbidden: Support tier ${supportTierId} has supporters`, void 0];
     }
     await runPreparedSQL(
         `UPDATE support_tier
