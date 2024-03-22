@@ -7,8 +7,24 @@ import Logger from "../../config/logger";
 
 export async function createSupportTier(
     body: SupportTierPost,
-    petitionId: number
+    petitionId: number,
+    userId: number
 ): Promise<[number, string, object | void]> {
+    interface Petition extends RowDataPacket {
+        owner_id: number
+    }
+    const [petition] = await runPreparedSQL<Petition[]>(
+        `SELECT owner_id
+         FROM petition
+         WHERE id = ?`,
+        [petitionId]
+    );
+    if (petition === undefined) {
+        return [404, "Petition not found", void 0];
+    }
+    if (petition.owner_id !== userId) {
+        return [403, `Forbidden: you do not own petition ${petitionId}`, void 0];
+    }
     try {
         const result = await runPreparedSQL<ResultSetHeader>(
             `INSERT INTO support_tier (petition_id, title, description, cost)
@@ -16,7 +32,7 @@ export async function createSupportTier(
             [petitionId, body.title, body.description, body.cost]
         );
         const supportTierId = result.insertId;
-        return [201, "User registered!", {supportTierId}];
+        return [201, `Created support tier ${supportTierId}!`, {supportTierId}];
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') {
             Logger.warn(error.message);
