@@ -39,7 +39,7 @@ export interface PetitionPost {
     title: string,
     description: string,
     categoryId: number,
-    supportTiers?: SupportTier[]
+    supportTiers: SupportTier[]
 }
 
 export interface PetitionPatch {
