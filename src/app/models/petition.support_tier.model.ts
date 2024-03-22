@@ -81,13 +81,24 @@ export async function alterSupportTier(
     if (supportTier.number_of_supporters > 0) {
         return [403, `Forbidden: Support tier ${supportTierId} has supporters`, void 0];
     }
+    const fieldsToUpdate = [];
+    if (body.title !== undefined) {
+        fieldsToUpdate.push(`title = '${body.title}'`);
+    }
+    if (body.description !== undefined) {
+        fieldsToUpdate.push(`description = '${body.description}'`);
+    }
+    if (body.cost !== undefined) {
+        fieldsToUpdate.push(`cost = ${body.cost}`);
+    }
+    if (fieldsToUpdate.length === 0) {
+        return [400, "No fields to update", void 0];
+    }
     await runPreparedSQL(
         `UPDATE support_tier
-         SET title = ?,
-             description = ?,
-             cost = ?
+         SET ${fieldsToUpdate.join(", ")}
          WHERE id = ?`,
-        [body.title, body.description, body.cost, supportTierId]
+        [supportTierId]
     );
     return [200, "Support tier updated", void 0];
 }
