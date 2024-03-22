@@ -17,7 +17,12 @@ export async function addSupportTier(request: Request, response: Response): Prom
         response.status(401).send("Unauthenticated: No x-authorization header");
         return;
     }
-    const newSupportTier = (body: SupportTierPost) => createSupportTier(body, petitionId);
+    const userId = await getUserId(token);
+    if (!userId) {
+        response.status(401).send("Unauthenticated: Invalid token");
+        return;
+    }
+    const newSupportTier = (body: SupportTierPost) => createSupportTier(body, petitionId, userId);
     const callback = () => processRequestBody(request.body, schemas.support_tier_post, newSupportTier);
     await respond(response, callback);
 }
