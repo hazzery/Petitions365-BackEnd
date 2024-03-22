@@ -4,6 +4,7 @@ import humps from "humps";
 import {PetitionPatch, PetitionPost, PetitionSearch} from "../types/requestBodySchemaInterfaces";
 import {DetailedPetition, PetitionOverview, SupportTier} from "../types/databaseRowDataPackets";
 import {runPreparedSQL, runSQL} from "../../config/db";
+import Logger from "../../config/logger";
 
 
 export async function allPetitions(body: PetitionSearch): Promise<[number, string, object | void]> {
@@ -64,8 +65,8 @@ export async function allPetitions(body: PetitionSearch): Promise<[number, strin
                 petition.creation_date            AS creation_date
          FROM petition
                   JOIN user AS owner ON owner.id = petition.owner_id
-                  JOIN supporter ON supporter.petition_id = petition.id
-                  JOIN support_tier ON support_tier.petition_id = petition.id
+                  LEFT JOIN supporter ON supporter.petition_id = petition.id
+                  LEFT JOIN support_tier ON support_tier.petition_id = petition.id
              ${whereClause.length > 0 ? `WHERE ${whereClause.join("AND ")}` : ""}
          GROUP BY petition.id ${havingClause.length > 0 ? `HAVING ${havingClause.join("AND ")}` : ""}
          ORDER BY ${orderByClause} petition.id ASC;`
@@ -82,35 +83,34 @@ export async function allPetitions(body: PetitionSearch): Promise<[number, strin
 }
 
 export async function singlePetition(petitionId: number): Promise<[number, string, object | void]> {
-    try {
-        const [petition] = await runSQL<DetailedPetition[]>(
-            `SELECT petition.description,
-                    SUM(support_tier.cost)            AS money_raised,
-                    petition.id                       AS petition_id,
-                    petition.title                    AS title,
-                    petition.category_id              AS category_id,
-                    petition.owner_id                 AS owner_id,
-                    owner.first_name                  AS owner_first_name,
-                    owner.last_name                   AS owner_last_name,
-                    COUNT(DISTINCT supporter.user_id) AS number_of_supporters,
-                    petition.creation_date            AS creation_date
-             FROM petition
-                      JOIN user AS owner ON owner.id = petition.owner_id
-                      JOIN supporter ON supporter.petition_id = petition.id
-                      JOIN support_tier ON support_tier.id = supporter.support_tier_id
-             WHERE petition.id = ${petitionId}
-             GROUP BY petition.id;`
-        );
-        const camelCasePetition = humps.camelizeKeys(petition) as any;
-        camelCasePetition.supportTiers = humps.camelizeKeys(await runSQL<SupportTier[]>(
-            `SELECT id AS support_tier_id, title, description, cost
-             FROM support_tier
-             WHERE petition_id = ${petitionId};`
-        ));
-        return [200, "Petition found", camelCasePetition];
-    } catch (error) {
+    const [petition] = await runSQL<DetailedPetition[]>(
+        `SELECT petition.description,
+                SUM(support_tier.cost)            AS money_raised,
+                petition.id                       AS petition_id,
+                petition.title                    AS title,
+                petition.category_id              AS category_id,
+                petition.owner_id                 AS owner_id,
+                owner.first_name                  AS owner_first_name,
+                owner.last_name                   AS owner_last_name,
+                COUNT(DISTINCT supporter.user_id) AS number_of_supporters,
+                petition.creation_date            AS creation_date
+         FROM petition
+                  JOIN user AS owner ON owner.id = petition.owner_id
+                  LEFT JOIN supporter ON supporter.petition_id = petition.id
+                  LEFT JOIN support_tier ON support_tier.id = supporter.support_tier_id
+         WHERE petition.id = ${petitionId}
+         GROUP BY petition.id;`
+    );
+    if (petition === undefined) {
         return [404, `Petition with id ${petitionId} does not exist`, void 0];
     }
+    const camelCasePetition = humps.camelizeKeys(petition) as any;
+    camelCasePetition.supportTiers = humps.camelizeKeys(await runSQL<SupportTier[]>(
+        `SELECT id AS support_tier_id, title, description, cost
+         FROM support_tier
+         WHERE petition_id = ${petitionId};`
+    ));
+    return [200, `Petition ${petitionId} found`, camelCasePetition];
 }
 
 export async function createPetition(
@@ -123,10 +123,10 @@ export async function createPetition(
             [new Date()]
         );
         const petitionId = result.insertId;
-        return [201, "New petition created", {petitionId}];
+        return [201, `Created petition ${petitionId}`, {petitionId}];
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') {
-            return [403, "Title already in use", void 0];
+            return [403, `Title '${body.title}' is already in use`, void 0];
         } else throw error;
     }
 }
@@ -142,7 +142,7 @@ export async function updatePetition(body: PetitionPatch, petitionId: number, us
          WHERE id = ${petitionId};`
     );
     if (ownerId?.owner_id !== userId) {
-        return [403, "Unable to edit other users' petitions", void 0];
+        return [403, `Unable to edit petition ${petitionId}, it is not your petition`, void 0];
     }
     const fieldsToUpdate: string[] = [];
     if (body.title) {
@@ -157,12 +157,15 @@ export async function updatePetition(body: PetitionPatch, petitionId: number, us
     if (fieldsToUpdate.length === 0) {
         return [400, "No fields to update", void 0];
     }
-    await runSQL(
+    const result = await runSQL<ResultSetHeader>(
         `UPDATE petition
          SET ${fieldsToUpdate.join(", ")}
          WHERE id = ${petitionId};`
     );
-    return [200, "Petition updated", void 0];
+    if (result === undefined || result.affectedRows === 0) {
+        return [404, `Petition with id ${petitionId} does not exist`, void 0];
+    }
+    return [200, `Petition ${petitionId} updated`, void 0];
 }
 
 export async function removePetition(petitionId: number, userId: number): Promise<[number, string, object | void]> {
@@ -174,7 +177,7 @@ export async function removePetition(petitionId: number, userId: number): Promis
     const [petition] = await runSQL<Petition[]>(
         `SELECT owner_id, COUNT(supporter.user_id) AS number_of_supporters
          FROM petition
-                  JOIN supporter ON supporter.petition_id = petition.id
+                  LEFT JOIN supporter ON supporter.petition_id = petition.id
          WHERE petition.id = ${petitionId}
          GROUP BY petition.id;`
     );
@@ -182,17 +185,17 @@ export async function removePetition(petitionId: number, userId: number): Promis
         return [404, `Petition with id ${petitionId} does not exist`, void 0];
     }
     if (petition.owner_id !== userId) {
-        return [403, "Unable to delete other users' petitions", void 0];
+        return [403, `Unable to delete petition ${petitionId}, it is not your petition`, void 0];
     }
     if (petition.number_of_supporters > 0) {
-        return [403, "Unable to delete petition with supporters", void 0];
+        return [403, `Unable to delete petition ${petitionId}, it has more than 0 supporters`, void 0];
     }
     await runSQL(
         `DELETE
          FROM petition
          WHERE id = ${petitionId};`
     );
-    return [200, "Petition deleted", void 0];
+    return [200, `Petition ${petitionId} deleted`, void 0];
 }
 
 export async function allCategories(): Promise<[number, string, object | void]> {
