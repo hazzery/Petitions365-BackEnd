@@ -14,6 +14,10 @@ ajv.addFormat("integer", {
 });
 
 
+export function contentType(request: Request): string {
+    return request.headers['content-type'] ?? '';
+}
+
 export function authenticationToken(request: Request): string | undefined {
     return request.headers["x-authorization"] as string | undefined;
 }

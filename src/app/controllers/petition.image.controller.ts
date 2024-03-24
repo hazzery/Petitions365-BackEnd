@@ -1,32 +1,24 @@
 import {Request, Response} from "express";
 
-import Logger from "../../config/logger";
+import {uploadUserImage} from "../models/user.image.model";
+import {contentType, respond} from "./common.controller";
 
 
 export async function getImage(request: Request, response: Response): Promise<void> {
-    try {
-        // Your code goes here
-        response.statusMessage = "Not Implemented Yet!";
-        response.status(501).send();
-        return;
-    } catch (err) {
-        Logger.error(err);
-        response.statusMessage = "Internal Server Error";
-        response.status(500).send();
-        return;
-    }
+
 }
 
 export async function setImage(request: Request, response: Response): Promise<void> {
-    try {
-        // Your code goes here
-        response.statusMessage = "Not Implemented Yet!";
-        response.status(501).send();
-        return;
-    } catch (err) {
-        Logger.error(err);
-        response.statusMessage = "Internal Server Error";
-        response.status(500).send();
+    const petitionId = parseInt(request.params.id, 10);
+    if (isNaN(petitionId)) {
+        response.status(400).send("Invalid petition id");
         return;
     }
+    const fileExtension = contentType(request).split('/')[1];
+    if (fileExtension === undefined || !['png', 'jpeg', 'gif'].includes(fileExtension)) {
+        response.status(400).send("Invalid content type, must be one of: png, jpeg, gif");
+        return;
+    }
+    const callback = () => uploadUserImage(request.body as Buffer, petitionId, fileExtension);
+    await respond(response, callback);
 }

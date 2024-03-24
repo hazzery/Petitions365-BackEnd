@@ -1,13 +1,9 @@
 import {Request, Response} from "express";
 
+import {authenticationToken, contentType, respond, respondImage} from "./common.controller";
 import {deleteUserImage, getUserImage, uploadUserImage} from "../models/user.image.model";
-import {authenticationToken, respond, respondImage} from "./common.controller";
 import {getUserId} from "../services/sessions";
 
-
-function contentType(request: Request): string {
-    return request.headers['content-type'] ?? '';
-}
 
 export async function getImage(request: Request, response: Response): Promise<void> {
     const userId = parseInt(request.params.id, 10);
