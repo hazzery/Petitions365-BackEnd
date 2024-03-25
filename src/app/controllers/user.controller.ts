@@ -38,7 +38,7 @@ export async function logout(request: Request, response: Response): Promise<void
 }
 
 export async function view(request: Request, response: Response): Promise<void> {
-    const userId = Number(request.params.id);
+    const userId = parseInt(request.params.id, 10);
     if (isNaN(userId) || userId <= 0) {
         Logger.warn("Bad Request: Invalid user ID");
         response.statusMessage = "Bad Request: Invalid user ID";
