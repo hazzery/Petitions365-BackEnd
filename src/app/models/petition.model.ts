@@ -9,7 +9,7 @@ import {runPreparedSQL, runSQL} from "../../config/db";
 export async function allPetitions(body: PetitionSearch): Promise<[number, string, object | void]> {
     const whereClause: string[] = [];
     if (body.ownerId) {
-        whereClause.push(`owner.id = '${body.ownerId}'`);
+        whereClause.push(`owner.id = ${body.ownerId}`);
     }
     if (body.q) {
         whereClause.push(`(petition.title LIKE '%${body.q}%' OR petition.description LIKE '%${body.q}%')`);
@@ -66,7 +66,7 @@ export async function allPetitions(body: PetitionSearch): Promise<[number, strin
                   JOIN user AS owner ON owner.id = petition.owner_id
                   LEFT JOIN supporter ON supporter.petition_id = petition.id
                   LEFT JOIN support_tier ON support_tier.petition_id = petition.id
-             ${whereClause.length > 0 ? `WHERE ${whereClause.join("AND ")}` : ""}
+             ${whereClause.length > 0 ? `WHERE ${whereClause.join(" AND ")}` : ""}
          GROUP BY petition.id ${havingClause.length > 0 ? `HAVING ${havingClause.join("AND ")}` : ""}
          ORDER BY ${orderByClause} petition.id ASC;`
     );
