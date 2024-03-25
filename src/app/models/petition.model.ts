@@ -116,12 +116,6 @@ export async function createPetition(
     body: PetitionPost, ownerId: number
 ): Promise<[number, string, { petitionId: number } | void]> {
     try {
-        const petitionResult = await runPreparedSQL<ResultSetHeader>(
-            `INSERT INTO petition (title, description, creation_date, owner_id, category_id)
-             VALUES ('${body.title}', '${body.description}', ?, ${ownerId}, ${body.categoryId});`,
-            [new Date()]
-        );
-        const petitionId = petitionResult.insertId;
         const tierNames = new Set();
         for (const supportTier of body.supportTiers) {
             tierNames.add(supportTier.title);
@@ -129,6 +123,20 @@ export async function createPetition(
         if (tierNames.size !== body.supportTiers.length) {
             return [400, "Support tier titles must be unique", void 0];
         }
+        const [category] = await runSQL<RowDataPacket[]>(
+            `SELECT id
+             FROM category
+             WHERE id = ${body.categoryId};`
+        );
+        if (category === undefined) {
+            return [400, `Category with id ${body.categoryId} does not exist`, void 0];
+        }
+        const petitionResult = await runPreparedSQL<ResultSetHeader>(
+            `INSERT INTO petition (title, description, creation_date, owner_id, category_id)
+             VALUES ('${body.title}', '${body.description}', ?, ${ownerId}, ${body.categoryId});`,
+            [new Date()]
+        );
+        const petitionId = petitionResult.insertId;
         for (const supportTier of body.supportTiers) {
             await runPreparedSQL<ResultSetHeader>(
                 `INSERT INTO support_tier (petition_id, title, description, cost)
