@@ -2,6 +2,7 @@ import {Request, Response} from "express";
 import addFormats from "ajv-formats";
 import Ajv from "ajv";
 
+import {getUserId} from "../services/sessions";
 import Logger from "../../config/logger";
 
 
@@ -20,6 +21,30 @@ export function contentType(request: Request): string {
 
 export function authenticationToken(request: Request): string | undefined {
     return request.headers["x-authorization"] as string | undefined;
+}
+
+export async function authoriseRequest(
+    token: string | undefined,
+    requestedUserIdString: string | undefined,
+): Promise<[number, string, number | void]> {
+    if (token === undefined) {
+        return [401, "Unauthenticated: No x-authorization header provided", void 0];
+    }
+    const requesterUserId = await getUserId(token);
+    if (requesterUserId === undefined) {
+        return [401, "Unauthenticated: Invalid x-authorization header provided", void 0];
+    }
+    if (requestedUserIdString === undefined) {
+        return [400, "Bad Request: No user ID provided", void 0];
+    }
+    const requestedUserId = parseInt(requestedUserIdString, 10);
+    if (isNaN(requestedUserId) || requestedUserId <= 0) {
+        return [400, "Bad Request: Invalid user ID", void 0];
+    }
+    if (requesterUserId !== requestedUserId) {
+        return [403, "Forbidden: You do not have permission to access this resource", void 0];
+    }
+    return [200, "OK", requestedUserId];
 }
 
 export async function processRequestBody<Input>(
