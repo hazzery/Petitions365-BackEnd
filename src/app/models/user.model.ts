@@ -108,6 +108,11 @@ export async function updateUser(userId: number, data: UserEdit): Promise<[numbe
         } else {
             return [403, "Incorrect password", void 0];
         }
+    } else if (data.currentPassword) {
+        return [403, "Please supply new password to update password.", void 0];
+    }
+    if (fieldsToUpdate.length === 0) {
+        return [400, "No fields to update", void 0];
     }
     try {
         await runSQL(
