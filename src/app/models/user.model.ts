@@ -75,10 +75,7 @@ export async function viewUser(userId: number, token: string): Promise<[number, 
     }
 }
 
-export async function updateUser(userId: number, token: string, data: UserEdit): Promise<[number, string, object | void]> {
-    if (userId !== await getUserId(token)) {
-        return [403, "Unable to edit other users", void 0];
-    }
+export async function updateUser(userId: number, data: UserEdit): Promise<[number, string, object | void]> {
     const fieldsToUpdate: string[] = [];
     if (data.email) {
         fieldsToUpdate.push(`email = '${data.email}'`);
