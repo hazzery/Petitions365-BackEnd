@@ -14,12 +14,12 @@ addFormats(ajv);
 
 
 export async function register(request: Request, response: Response): Promise<void> {
-    const callback = () => processRequestBody(request.body, schemas.user_register, users.registerUser);
+    const callback = async () => await processRequestBody(request.body, schemas.user_register, users.registerUser);
     await respond(response, callback);
 }
 
 export async function login(request: Request, response: Response): Promise<void> {
-    const callback = () => processRequestBody(request.body, schemas.user_login, users.loginUser);
+    const callback = async () => await processRequestBody(request.body, schemas.user_login, users.loginUser);
     await respond(response, callback);
 }
 
