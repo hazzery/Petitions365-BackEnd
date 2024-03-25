@@ -53,7 +53,11 @@ export async function respondImage(
     response: Response,
     callback: () => Promise<[number, string, object | void, string]>
 ): Promise<void> {
-    const [status, message, result, mimeType] = await callback();
+    const [status, message, result, imageType] = await callback();
+    let mimeType = 'text/plain';
+    if (result !== undefined && imageType.length >= 0) {
+        mimeType = imageType;
+    }
     Logger.info(message);
     response.statusMessage = message;
     response.contentType(mimeType);
