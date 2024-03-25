@@ -1,5 +1,5 @@
-import addFormats from "ajv-formats";
 import {Request, Response} from "express";
+import addFormats from "ajv-formats";
 import Ajv from "ajv";
 
 import Logger from "../../config/logger";
@@ -37,6 +37,18 @@ export async function processRequestBody<Input>(
     } catch (err) {
         return [500, "Internal Server Error", void 0];
     }
+}
+
+export async function respondErrors<T extends number | void>(
+    response: Response, callback: () => Promise<[number, string, T]>
+): Promise<T> {
+    const [status, message, result] = await callback();
+    if (status >= 400) {
+        Logger.info(message);
+        response.statusMessage = message;
+        response.status(status).send();
+    }
+    return result;
 }
 
 export async function respond(
