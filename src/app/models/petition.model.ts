@@ -148,7 +148,8 @@ export async function createPetition(
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') {
             return [403, `Title '${body.title}' is already in use`, void 0];
-        } else throw error;
+        }
+        throw error;
     }
 }
 
