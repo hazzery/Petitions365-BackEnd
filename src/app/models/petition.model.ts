@@ -4,6 +4,7 @@ import humps from "humps";
 import {PetitionPatch, PetitionPost, PetitionSearch} from "../types/requestBodySchemaInterfaces";
 import {DetailedPetition, PetitionOverview, SupportTier} from "../types/databaseRowDataPackets";
 import {runPreparedSQL, runSQL} from "../../config/db";
+import Logger from "../../config/logger";
 
 
 export async function allPetitions(body: PetitionSearch): Promise<[number, string, object | void]> {
@@ -187,13 +188,21 @@ export async function updatePetition(body: PetitionPatch, petitionId: number, us
     if (fieldsToUpdate.length === 0) {
         return [400, "No fields to update", void 0];
     }
-    const result = await runSQL<ResultSetHeader>(
-        `UPDATE petition
-         SET ${fieldsToUpdate.join(", ")}
-         WHERE id = ${petitionId};`
-    );
-    if (result === undefined || result.affectedRows === 0) {
-        return [404, `Petition with id ${petitionId} does not exist`, void 0];
+    try {
+        const result = await runSQL<ResultSetHeader>(
+            `UPDATE petition
+             SET ${fieldsToUpdate.join(", ")}
+             WHERE id = ${petitionId};`
+        );
+        if (result === undefined || result.affectedRows === 0) {
+            return [404, `Petition with id ${petitionId} does not exist`, void 0];
+        }
+    } catch (error) {
+        if (error.code === 'ER_DUP_ENTRY') {
+            Logger.warn(error.message);
+            return [403, "Petition title already in use", void 0];
+        }
+        throw error;
     }
     return [200, `Petition ${petitionId} updated`, void 0];
 }
