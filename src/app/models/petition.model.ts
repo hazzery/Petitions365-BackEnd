@@ -174,6 +174,14 @@ export async function updatePetition(body: PetitionPatch, petitionId: number, us
         fieldsToUpdate.push(`description = '${body.description}'`);
     }
     if (body.categoryId) {
+        const [category] = await runSQL<RowDataPacket[]>(
+            `SELECT id
+             FROM category
+             WHERE id = ${body.categoryId};`
+        );
+        if (category === undefined) {
+            return [400, `Category with id ${body.categoryId} does not exist`, void 0];
+        }
         fieldsToUpdate.push(`category_id = ${body.categoryId}`);
     }
     if (fieldsToUpdate.length === 0) {
