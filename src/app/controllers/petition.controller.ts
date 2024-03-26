@@ -21,7 +21,8 @@ export async function getAllPetitions(request: Request, response: Response): Pro
 export async function getPetition(request: Request, response: Response): Promise<void> {
     const petitionId = parseInt(request.params.id, 10);
     if (isNaN(petitionId)) {
-        response.status(400).send("Invalid petition id");
+        response.statusMessage = "Invalid petition id";
+        response.status(400).send();
         return;
     }
     const callback = async () => await singlePetition(petitionId);
@@ -31,12 +32,14 @@ export async function getPetition(request: Request, response: Response): Promise
 export async function addPetition(request: Request, response: Response): Promise<void> {
     const token = authenticationToken(request);
     if (token === undefined) {
-        response.status(401).send("Unauthenticated: No x-authorization header");
+        response.statusMessage = "Unauthenticated: No x-authorization header";
+        response.status(401).send();
         return;
     }
     const userId = await getUserId(token);
     if (userId === undefined) {
-        response.status(401).send("Unauthenticated: Invalid token");
+        response.statusMessage = "Unauthenticated: Invalid token";
+        response.status(401).send();
         return;
     }
     const makePetition = async (body: PetitionPost) => await createPetition(body, userId)
@@ -47,17 +50,20 @@ export async function addPetition(request: Request, response: Response): Promise
 export async function editPetition(request: Request, response: Response): Promise<void> {
     const token = authenticationToken(request);
     if (token === undefined) {
-        response.status(401).send("Unauthenticated: No x-authorization header");
+        response.statusMessage = "Unauthenticated: No x-authorization header";
+        response.status(401).send();
         return;
     }
     const userId = await getUserId(token);
     if (userId === undefined) {
-        response.status(401).send("Unauthenticated: Invalid token");
+        response.statusMessage = "Unauthenticated: Invalid token";
+        response.status(401).send();
         return;
     }
     const petitionId = parseInt(request.params.id, 10);
     if (isNaN(petitionId)) {
-        response.status(400).send("Invalid petition id");
+        response.statusMessage = "Invalid petition id"
+        response.status(400).send();
         return;
     }
     const patchPetition = async (body: PetitionPatch) => await updatePetition(body, petitionId, userId);
@@ -68,17 +74,20 @@ export async function editPetition(request: Request, response: Response): Promis
 export async function deletePetition(request: Request, response: Response): Promise<void> {
     const token = authenticationToken(request);
     if (token === undefined) {
-        response.status(401).send("Unauthenticated: No x-authorization header");
+        response.statusMessage = "Unauthenticated: No x-authorization header";
+        response.status(401).send();
         return;
     }
     const userId = await getUserId(token);
     if (userId === undefined) {
-        response.status(401).send("Unauthenticated: Invalid token");
+        response.statusMessage = "Unauthenticated: Invalid token";
+        response.status(401).send();
         return;
     }
     const petitionId = parseInt(request.params.id, 10);
     if (isNaN(petitionId)) {
-        response.status(400).send("Invalid petition id");
+        response.statusMessage = "Invalid petition id";
+        response.status(400).send();
         return;
     }
     const callback = async () => await removePetition(petitionId, userId);
