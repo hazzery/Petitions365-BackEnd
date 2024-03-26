@@ -50,6 +50,15 @@ export async function addNewSupporter(body: SupportPost, petitionId: number, use
     if (petition.owner_id === userId) {
         return [403, `You (${userId}) cannot support your own petition (${petitionId})`, void 0];
     }
+    const [supportTier] = await runPreparedSQL<RowDataPacket[]>(
+        `SELECT id
+         FROM support_tier
+         WHERE id = ?;`,
+        [body.supportTierId]
+    );
+    if (supportTier === undefined) {
+        return [404, `Support tier ${body.supportTierId} not found`, void 0];
+    }
     try {
         const result = await runPreparedSQL<ResultSetHeader>(
             `INSERT INTO supporter (petition_id, support_tier_id, user_id, message)
