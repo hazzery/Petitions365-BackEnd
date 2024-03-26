@@ -44,7 +44,8 @@ export async function createSupportTier(
         if (error.code === 'ER_DUP_ENTRY') {
             Logger.warn(error.message);
             return [403, "Title already in use", void 0];
-        } else throw error;
+        }
+        throw error;
     }
 }
 
