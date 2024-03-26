@@ -95,12 +95,20 @@ export async function alterSupportTier(
     if (fieldsToUpdate.length === 0) {
         return [400, "No fields to update", void 0];
     }
-    await runPreparedSQL(
-        `UPDATE support_tier
-         SET ${fieldsToUpdate.join(", ")}
-         WHERE id = ?`,
-        [supportTierId]
-    );
+    try {
+        await runPreparedSQL(
+            `UPDATE support_tier
+             SET ${fieldsToUpdate.join(", ")}
+             WHERE id = ?`,
+            [supportTierId]
+        );
+    } catch (error) {
+        if (error.code === 'ER_DUP_ENTRY') {
+            Logger.warn(error.message);
+            return [403, "Title already in use", void 0];
+        }
+        throw error;
+    }
     return [200, "Support tier updated", void 0];
 }
 
