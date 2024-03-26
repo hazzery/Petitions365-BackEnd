@@ -88,7 +88,7 @@ export async function allPetitions(body: PetitionSearch): Promise<[number, strin
                   LEFT JOIN supporter ON supporter.petition_id = petition.id
                   LEFT JOIN support_tier ON support_tier.petition_id = petition.id
              ${whereClause.length > 0 ? `WHERE ${whereClause.join(" AND ")}` : ""}
-         GROUP BY petition.id ${havingClause.length > 0 ? `HAVING ${havingClause.join("AND ")}` : ""}
+         GROUP BY petition.id ${havingClause.length > 0 ? `HAVING ${havingClause.join(" AND ")}` : ""}
          ORDER BY ${orderByClause} petition.id ASC;`
     );
     const count = petitions.length;
