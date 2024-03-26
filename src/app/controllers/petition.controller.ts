@@ -14,7 +14,7 @@ import * as schemas from '../resources/schemas.json'
 import {getUserId} from "../services/sessions";
 
 export async function getAllPetitions(request: Request, response: Response): Promise<void> {
-    const callback = async () => processRequestBody(request.query, schemas.petition_search, allPetitions);
+    const callback = async () => await processRequestBody(request.query, schemas.petition_search, allPetitions);
     await respond(response, callback);
 }
 
@@ -24,7 +24,7 @@ export async function getPetition(request: Request, response: Response): Promise
         response.status(400).send("Invalid petition id");
         return;
     }
-    const callback = async () => singlePetition(petitionId);
+    const callback = async () => await singlePetition(petitionId);
     await respond(response, callback);
 }
 
@@ -39,8 +39,8 @@ export async function addPetition(request: Request, response: Response): Promise
         response.status(401).send("Unauthenticated: Invalid token");
         return;
     }
-    const makePetition = async (body: PetitionPost) => createPetition(body, userId)
-    const callback = async () => processRequestBody(request.body, schemas.petition_post, makePetition);
+    const makePetition = async (body: PetitionPost) => await createPetition(body, userId)
+    const callback = async () => await processRequestBody(request.body, schemas.petition_post, makePetition);
     await respond(response, callback);
 }
 
@@ -60,8 +60,8 @@ export async function editPetition(request: Request, response: Response): Promis
         response.status(400).send("Invalid petition id");
         return;
     }
-    const patchPetition = async (body: PetitionPatch) => updatePetition(body, petitionId, userId);
-    const callback = async () => processRequestBody(request.body, schemas.petition_patch, patchPetition);
+    const patchPetition = async (body: PetitionPatch) => await updatePetition(body, petitionId, userId);
+    const callback = async () => await processRequestBody(request.body, schemas.petition_patch, patchPetition);
     await respond(response, callback);
 }
 
@@ -81,7 +81,7 @@ export async function deletePetition(request: Request, response: Response): Prom
         response.status(400).send("Invalid petition id");
         return;
     }
-    const callback = async () => removePetition(petitionId, userId);
+    const callback = async () => await removePetition(petitionId, userId);
     await respond(response, callback);
 }
 
