@@ -34,10 +34,23 @@ export async function uploadPetitionImage(
     fileExtension: string,
     userId: number
 ): Promise<[number, string, object | void]> {
-    const existingFileName = await checkPetitionImage(petitionId);
-    if (existingFileName === undefined) {
+    interface Petition extends RowDataPacket {
+        owner_id: number
+    }
+
+    const [petition] = await runPreparedSQL<Petition[]>(
+        `SELECT owner_id
+         FROM petition
+         WHERE id = ?`,
+        [petitionId]
+    );
+    if (petition === undefined) {
         return [404, `No petition ${petitionId}`, void 0];
     }
+    if (petition.owner_id !== userId) {
+        return [403, `You (${userId}) are not the owner of petition (${petitionId})`, void 0];
+    }
+    const existingFileName = await checkPetitionImage(petitionId);
     const fileName = `${userId}.${fileExtension}`;
     const newFilePath = path.join(imageDirectory, fileName);
     try {
