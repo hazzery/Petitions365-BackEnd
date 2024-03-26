@@ -94,6 +94,9 @@ export async function respondImage(
     let mimeType = 'text/plain';
     if (result !== undefined && imageType.length >= 0) {
         mimeType = imageType;
+        if (mimeType === 'image/jpg') {
+            mimeType = 'image/jpeg';
+        }
     }
     Logger.info(message);
     response.statusMessage = message;
