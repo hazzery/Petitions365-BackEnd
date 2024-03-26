@@ -17,8 +17,28 @@ export async function allPetitions(body: PetitionSearch): Promise<[number, strin
     }
     if (body.categoryIds) {
         if (Array.isArray(body.categoryIds)) {
+            for (const categoryId of body.categoryIds) {
+                const [category] = await runPreparedSQL<RowDataPacket[]>(
+                    `SELECT id
+                     FROM category
+                     WHERE id = ?;`,
+                    [parseInt(categoryId, 10)]
+                );
+                if (category === undefined) {
+                    return [400, `Category with id ${categoryId} does not exist`, void 0];
+                }
+            }
             whereClause.push(`petition.category_id IN (${body.categoryIds.join(", ")})`);
         } else {
+            const [category] = await runPreparedSQL<RowDataPacket[]>(
+                `SELECT id
+                 FROM category
+                 WHERE id = ?;`,
+                [parseInt(body.categoryIds, 10)]
+            );
+            if (category === undefined) {
+                return [400, `Category with id ${body.categoryIds} does not exist`, void 0];
+            }
             whereClause.push(`petition.category_id = ${body.categoryIds}`);
         }
     }
