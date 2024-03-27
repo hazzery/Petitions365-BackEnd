@@ -1,7 +1,7 @@
 import {ResultSetHeader, RowDataPacket} from "mysql2";
 
 import {UserEdit, UserLogin, UserRegister} from "../types/requestBodySchemaInterfaces";
-import {createSession, deleteSession, getUserId} from "../services/sessions";
+import {createSession, deleteSession} from "../services/sessions";
 import {compare, hash} from "../services/passwords";
 import Logger from "../../config/logger";
 import {runSQL} from "../../config/db";
