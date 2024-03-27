@@ -53,7 +53,7 @@ export async function logoutUser(token: string): Promise<[number, string]> {
     }
 }
 
-export async function viewUser(userId: number, token: string): Promise<[number, string, object | void]> {
+export async function viewUser(userId: number, senderId: number | undefined): Promise<[number, string, object | void]> {
     interface User extends RowDataPacket {
         first_name: string,
         last_name: string,
@@ -68,7 +68,7 @@ export async function viewUser(userId: number, token: string): Promise<[number, 
     if (user === undefined) {
         return [404, "User not found", void 0];
     }
-    if (userId === await getUserId(token)) {
+    if (userId === senderId) {
         return [200, "OK", {firstName: user.first_name, lastName: user.last_name, email: user.email}];
     } else {
         return [200, "User found!", {firstName: user.first_name, lastName: user.last_name}];

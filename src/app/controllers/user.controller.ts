@@ -7,6 +7,7 @@ import {UserEdit} from "../types/requestBodySchemaInterfaces";
 import * as schemas from '../resources/schemas.json';
 import * as users from '../models/user.model';
 import Logger from '../../config/logger';
+import {getUserId} from "../services/sessions";
 
 
 const ajv = new Ajv({removeAdditional: 'all'});
@@ -46,13 +47,11 @@ export async function view(request: Request, response: Response): Promise<void> 
         return;
     }
     const token = authenticationToken(request);
-    if (token === undefined) {
-        Logger.warn("Unauthorized: No token provided!");
-        response.statusMessage = "Unauthorized: No token provided!";
-        response.status(401).send();
-        return;
+    let senderId;
+    if (token !== undefined) {
+        senderId = await getUserId(token);
     }
-    const [status, message, user] = await users.viewUser(userId, token);
+    const [status, message, user] = await users.viewUser(userId, senderId);
     response.statusMessage = message;
     response.status(status).send(user);
 }
