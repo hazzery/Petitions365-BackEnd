@@ -106,7 +106,7 @@ export async function updateUser(userId: number, data: UserEdit): Promise<[numbe
         if (await compare(data.currentPassword, user.password)) {
             fieldsToUpdate.push(`password = '${await hash(data.password)}'`);
         } else {
-            return [403, "Incorrect password", void 0];
+            return [401, "Incorrect password", void 0];
         }
     } else if (data.currentPassword) {
         return [403, "Please supply new password to update password.", void 0];
