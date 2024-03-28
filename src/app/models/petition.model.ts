@@ -84,11 +84,11 @@ export async function allPetitions(body: PetitionSearch): Promise<[number, strin
                 COUNT(DISTINCT supporter.user_id) AS number_of_supporters,
                 petition.creation_date            AS creation_date
          FROM petition
-                  JOIN user AS owner ON owner.id = petition.owner_id
+                  LEFT JOIN user AS owner ON owner.id = petition.owner_id
                   LEFT JOIN supporter ON supporter.petition_id = petition.id
                   LEFT JOIN support_tier ON support_tier.petition_id = petition.id
              ${whereClause.length > 0 ? `WHERE ${whereClause.join(" AND ")}` : ""}
-         GROUP BY petition.id ${havingClause.length > 0 ? `HAVING ${havingClause.join(" AND ")}` : ""}
+         GROUP BY petition.id, petition.title, petition.creation_date ${havingClause.length > 0 ? `HAVING ${havingClause.join(" AND ")}` : ""}
          ORDER BY ${orderByClause} petition.id ASC;`
     );
     const count = petitions.length;
@@ -112,7 +112,7 @@ export async function singlePetition(petitionId: number): Promise<[number, strin
                 petition.owner_id                   AS owner_id,
                 owner.first_name                    AS owner_first_name,
                 owner.last_name                     AS owner_last_name,
-                COUNT(DISTINCT supporter.user_id)   AS number_of_supporters,
+                COUNT(supporter.user_id)            AS number_of_supporters,
                 petition.creation_date              AS creation_date
          FROM petition
                   JOIN user AS owner ON owner.id = petition.owner_id
