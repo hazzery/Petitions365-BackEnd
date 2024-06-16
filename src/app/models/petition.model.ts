@@ -115,7 +115,7 @@ export async function allPetitions(body: PetitionSearch): Promise<[number, strin
 }
 
 export async function singlePetition(petitionId: number): Promise<[number, string, object | void]> {
-    const [petition] = await runSQL<DetailedPetition[]>(
+    const [petition] = await runPreparedSQL<DetailedPetition[]>(
         `SELECT petition.description,
                 CAST(SUM(support_tier.cost) AS INT) AS money_raised,
                 petition.id                         AS petition_id,
@@ -130,17 +130,19 @@ export async function singlePetition(petitionId: number): Promise<[number, strin
                   JOIN user AS owner ON owner.id = petition.owner_id
                   LEFT JOIN supporter ON supporter.petition_id = petition.id
                   LEFT JOIN support_tier ON support_tier.id = supporter.support_tier_id
-         WHERE petition.id = ${petitionId}
-         GROUP BY petition.id;`
+         WHERE petition.id = ?
+         GROUP BY petition.id;`,
+        [petitionId]
     );
     if (petition === undefined) {
         return [404, `Petition with id ${petitionId} does not exist`, void 0];
     }
     const camelCasePetition = humps.camelizeKeys(petition) as any;
-    camelCasePetition.supportTiers = humps.camelizeKeys(await runSQL<SupportTier[]>(
+    camelCasePetition.supportTiers = humps.camelizeKeys(await runPreparedSQL<SupportTier[]>(
         `SELECT id AS support_tier_id, title, description, cost
          FROM support_tier
-         WHERE petition_id = ${petitionId};`
+         WHERE petition_id = ?;`,
+        [petitionId]
     ));
     return [200, `Petition ${petitionId} found`, camelCasePetition];
 }
