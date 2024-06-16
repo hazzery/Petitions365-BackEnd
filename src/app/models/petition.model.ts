@@ -22,7 +22,7 @@ function categoryExists(categoryId: string): Promise<boolean> {
 
 export async function allPetitions(body: PetitionSearch): Promise<[number, string, object | void]> {
     const whereClause: string[] = [];
-    if (body.ownerId) {
+    if (body.ownerId && !isNaN(parseInt(body.ownerId, 10))) {
         whereClause.push(`owner.id = ${body.ownerId}`);
     }
     if (body.q) {
@@ -45,10 +45,10 @@ export async function allPetitions(body: PetitionSearch): Promise<[number, strin
         }
     }
     const havingClause: string[] = [];
-    if (body.supportingCost) {
+    if (body.supportingCost && !isNaN(parseInt(body.supportingCost, 10))) {
         havingClause.push(`MIN(support_tier.cost) <= ${body.supportingCost}`);
     }
-    if (body.supporterId) {
+    if (body.supporterId && !isNaN(parseInt(body.supporterId, 10))) {
         havingClause.push(`SUM(CASE WHEN supporter.user_id = ${body.supporterId} THEN 1 ELSE 0 END) > 0`);
     }
     let orderByClause: string;
