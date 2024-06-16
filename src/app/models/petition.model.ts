@@ -158,10 +158,11 @@ export async function createPetition(
         if (tierNames.size !== body.supportTiers.length) {
             return [400, "Support tier titles must be unique", void 0];
         }
-        const [category] = await runSQL<RowDataPacket[]>(
+        const [category] = await runPreparedSQL<RowDataPacket[]>(
             `SELECT id
              FROM category
-             WHERE id = ${body.categoryId};`
+             WHERE id = ?;`,
+            [body.categoryId]
         );
         if (category === undefined) {
             return [400, `Category with id ${body.categoryId} does not exist`, void 0];
@@ -193,10 +194,11 @@ export async function updatePetition(body: PetitionPatch, petitionId: number, us
         owner_id: number
     }
 
-    const [ownerId] = await runSQL<PetitionId[]>(
+    const [ownerId] = await runPreparedSQL<PetitionId[]>(
         `SELECT owner_id
          FROM petition
-         WHERE id = ${petitionId};`
+         WHERE id = ?;`,
+        [petitionId]
     );
     if (ownerId?.owner_id !== userId) {
         return [403, `Unable to edit petition ${petitionId}, it is not your petition`, void 0];
@@ -223,10 +225,11 @@ export async function updatePetition(body: PetitionPatch, petitionId: number, us
         return [400, "No fields to update", void 0];
     }
     try {
-        const result = await runSQL<ResultSetHeader>(
+        const result = await runPreparedSQL<ResultSetHeader>(
             `UPDATE petition
              SET ${fieldsToUpdate.join(", ")}
-             WHERE id = ${petitionId};`
+             WHERE id = ?;`,
+            [petitionId]
         );
         if (result === undefined || result.affectedRows === 0) {
             return [404, `Petition with id ${petitionId} does not exist`, void 0];
@@ -247,12 +250,13 @@ export async function removePetition(petitionId: number, userId: number): Promis
         number_of_supporters: number
     }
 
-    const [petition] = await runSQL<Petition[]>(
+    const [petition] = await runPreparedSQL<Petition[]>(
         `SELECT owner_id, COUNT(supporter.user_id) AS number_of_supporters
          FROM petition
                   LEFT JOIN supporter ON supporter.petition_id = petition.id
-         WHERE petition.id = ${petitionId}
-         GROUP BY petition.id;`
+         WHERE petition.id = ?
+         GROUP BY petition.id;`,
+        [petitionId]
     );
     if (!petition) {
         return [404, `Petition with id ${petitionId} does not exist`, void 0];
@@ -263,10 +267,11 @@ export async function removePetition(petitionId: number, userId: number): Promis
     if (petition.number_of_supporters > 0) {
         return [403, `Unable to delete petition ${petitionId}, it has more than 0 supporters`, void 0];
     }
-    await runSQL(
+    await runPreparedSQL(
         `DELETE
          FROM petition
-         WHERE id = ${petitionId};`
+         WHERE id = ?;`,
+        [petitionId]
     );
     return [200, `Petition ${petitionId} deleted`, void 0];
 }
