@@ -93,15 +93,25 @@ export async function allPetitions(body: PetitionSearch): Promise<[number, strin
          GROUP BY petition.id, petition.title, petition.creation_date ${havingClause.length > 0 ? `HAVING ${havingClause.join(" AND ")}` : ""}
          ORDER BY ${orderByClause} petition.id ASC;`
     );
-    const count = petitions.length;
+    const totalCount = petitions.length;
     if (body.startIndex) {
-        petitions.splice(0, parseInt(body.startIndex, 10));
+        const startIndex = parseInt(body.startIndex, 10);
+        if (startIndex >= 0 && startIndex < petitions.length) {
+            petitions.splice(0, startIndex);
+        } else {
+            return [400, "invalid startIndex", void 0];
+        }
     }
     if (body.count) {
-        petitions.splice(parseInt(body.count, 10), petitions.length);
+        const count = parseInt(body.count, 10);
+        if (count >= 0 && count <= petitions.length) {
+            petitions.splice(count, petitions.length);
+        } else {
+            return [400, "invalid count", void 0];
+        }
     }
     const camelCasePetitions = humps.camelizeKeys(petitions);
-    return [200, "All petitions matching given query have been sent", {petitions: camelCasePetitions, count}];
+    return [200, "All petitions matching given query have been sent", {petitions: camelCasePetitions, count: totalCount}];
 }
 
 export async function singlePetition(petitionId: number): Promise<[number, string, object | void]> {
