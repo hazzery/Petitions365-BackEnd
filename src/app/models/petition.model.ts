@@ -7,6 +7,19 @@ import {runPreparedSQL, runSQL} from "../../config/db";
 import Logger from "../../config/logger";
 
 
+function categoryExists(categoryId: string): Promise<boolean> {
+    return new Promise((resolve) => {
+        runPreparedSQL<RowDataPacket[]>(
+            `SELECT id
+             FROM category
+             WHERE id = ?;`,
+            [parseInt(categoryId, 10)]
+        ).then(([category]) => {
+            resolve(category !== undefined);
+        });
+    });
+}
+
 export async function allPetitions(body: PetitionSearch): Promise<[number, string, object | void]> {
     const whereClause: string[] = [];
     if (body.ownerId) {
@@ -17,26 +30,15 @@ export async function allPetitions(body: PetitionSearch): Promise<[number, strin
     }
     if (body.categoryIds) {
         if (Array.isArray(body.categoryIds)) {
-            for (const categoryId of body.categoryIds) {
-                const [category] = await runPreparedSQL<RowDataPacket[]>(
-                    `SELECT id
-                     FROM category
-                     WHERE id = ?;`,
-                    [parseInt(categoryId, 10)]
-                );
-                if (category === undefined) {
-                    return [400, `Category with id ${categoryId} does not exist`, void 0];
+            const results = await Promise.all(body.categoryIds.map(categoryExists));
+            for (let i = 0; i < results.length; i++) {
+                if (!results[i]) {
+                    return [400, `Category with id ${body.categoryIds[i]} does not exist`, void 0];
                 }
             }
             whereClause.push(`petition.category_id IN (${body.categoryIds.join(", ")})`);
         } else {
-            const [category] = await runPreparedSQL<RowDataPacket[]>(
-                `SELECT id
-                 FROM category
-                 WHERE id = ?;`,
-                [parseInt(body.categoryIds, 10)]
-            );
-            if (category === undefined) {
+            if (!await categoryExists(body.categoryIds)) {
                 return [400, `Category with id ${body.categoryIds} does not exist`, void 0];
             }
             whereClause.push(`petition.category_id = ${body.categoryIds}`);
