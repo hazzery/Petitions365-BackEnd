@@ -1,6 +1,6 @@
 # Petitions365 REST API
 
-This project was created as an assignment for my 3rd year Web Computing course.
+This project was created as an assignment for my 3rd year web computing course.
 The project is a REST API that allows users to create, read, update, and delete petitions.
 The API is built using Node.js and Express, and uses a MySQL database to store data.
 We had to implement the api to conform to the specification provided in the [specification document](api_spec.yaml).
